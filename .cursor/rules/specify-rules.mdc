@@ -1,0 +1,36 @@
+# start-kit Development Guidelines
+
+Auto-generated from all feature plans. Last updated: 2025-11-29
+
+## Active Technologies
+- TypeScript 5.5.4, Node.js (via Next.js runtime) + Next.js 14.2.5, Prisma (to be installed), PostgreSQL (local or Docker) (003-prisma-postgres-setup)
+- PostgreSQL database (local installation or Docker container) (003-prisma-postgres-setup)
+- TypeScript 5.5.4 (strict mode) + Next.js 16.0.6, NextAuth.js (v5), Prisma 6.19.0, React 19.0.0, bcryp (004-auth-roles-setup)
+- PostgreSQL (via Prisma ORM), database sessions for NextAuth (004-auth-roles-setup)
+- TypeScript 5.5.4 (strict mode) + Next.js 16.0.6, React 19.0.0, Prisma 6.19.0, NextAuth 5.0.0-beta.30, TanStack Query 5.90.11, TanStack Table 8.21.3, shadcn/ui, TailwindCSS (005-admin-users)
+
+- TypeScript 5.x (strict mode enabled) (001-project-setup)
+
+## Project Structure
+
+```text
+src/
+tests/
+```
+
+## Commands
+
+npm test && npm run lint
+
+## Code Style
+
+TypeScript 5.x (strict mode enabled): Follow standard conventions
+
+## Recent Changes
+- 005-admin-users: Added TypeScript 5.5.4 (strict mode) + Next.js 16.0.6, React 19.0.0, Prisma 6.19.0, NextAuth 5.0.0-beta.30, TanStack Query 5.90.11, TanStack Table 8.21.3, shadcn/ui, TailwindCSS
+- 004-auth-roles-setup: Added TypeScript 5.5.4 (strict mode) + Next.js 16.0.6, NextAuth.js (v5), Prisma 6.19.0, React 19.0.0, bcryp
+- 003-prisma-postgres-setup: Added TypeScript 5.5.4, Node.js (via Next.js runtime) + Next.js 14.2.5, Prisma (to be installed), PostgreSQL (local or Docker)
+
+
+<!-- MANUAL ADDITIONS START -->
+<!-- MANUAL ADDITIONS END -->

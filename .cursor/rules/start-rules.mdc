@@ -1,0 +1,269 @@
+---
+alwaysApply: true
+---
+
+# Правила разработки проекта start-kit
+
+## Общие принципы
+
+### Язык интерфейса
+- **Все тексты в UI должны быть на русском языке** (кнопки, сообщения, заголовки, ошибки, подсказки)
+- Код, комментарии в коде, названия переменных и функций — на английском
+- Документация в коде может быть на русском для бизнес-логики
+
+### Принципы разработки
+1. **MVP First, Extensible Later** — приоритет на рабочий функционал, расширяемость позже
+2. **Clear Separation of Concerns** — четкое разделение UI, логики, data fetching и моделей
+3. **API and Data Model Are the Source of Truth** — Prisma схема и API контракты — источник истины
+4. **Safety and Privacy by Default** — безопасность и приватность по умолчанию
+5. **Predictable UX & Simple Flows** — предсказуемый UX и простые потоки
+
+## Технологический стек
+
+### Frontend
+- **Framework**: Next.js 16+ (App Router)
+- **Language**: TypeScript 5.5.4 (strict mode)
+- **Styling**: TailwindCSS
+- **UI Components**: shadcn/ui
+- **State Management**: Zustand (для глобального состояния при необходимости)
+- **Data Fetching**: TanStack Query (React Query) — все запросы через хуки
+- **Tables**: TanStack Table для сложных таблиц
+- **HTTP Client**: Axios с централизованной конфигурацией
+
+### Backend
+- **Runtime**: Node.js (через Next.js API routes)
+- **ORM**: Prisma 6.19.0
+- **Database**: PostgreSQL
+- **Authentication**: NextAuth.js v5 (Auth.js)
+- **Session**: Database sessions через Prisma Adapter
+
+### Инструменты качества
+- **Linting**: ESLint (next/core-web-vitals)
+- **Formatting**: Prettier
+- **Type Checking**: TypeScript strict mode
+
+## Структура проекта
+
+```
+/
+├── app/                    # Next.js App Router (pages, API routes)
+│   ├── (auth)/            # Группа маршрутов для аутентификации
+│   ├── (protected)/       # Защищенные маршруты
+│   └── api/               # API endpoints
+├── components/            # React компоненты
+│   ├── ui/               # shadcn/ui компоненты
+│   └── [feature]/        # Компоненты по доменам
+├── lib/                  # Утилиты и общий код
+│   ├── api.ts            # Axios instance
+│   ├── auth/             # NextAuth конфигурация
+│   ├── db.ts             # Prisma Client singleton
+│   └── utils.ts          # Общие утилиты
+├── prisma/               # Prisma схема и миграции
+└── public/               # Статические файлы
+```
+
+## Правила кода
+
+### TypeScript
+- **Строгий режим обязателен**: `strict: true`, `noUnusedLocals`, `noUnusedParameters`
+- Используй явные типы, избегай `any`
+- Типы для API должны быть выведены из Prisma схемы или API контрактов
+- Используй `@/` алиасы для импортов
+
+### Именование
+- **Компоненты**: PascalCase (`UserProfile.tsx`)
+- **Функции/переменные**: camelCase (`getUserData`, `isLoading`)
+- **Константы**: UPPER_SNAKE_CASE (`API_BASE_URL`)
+- **Типы/интерфейсы**: PascalCase (`UserData`, `ApiResponse`)
+- **Файлы компонентов**: PascalCase для компонентов, camelCase для утилит
+
+### React компоненты
+- Используй функциональные компоненты с хуками
+- Разделяй презентационные и контейнерные компоненты
+- Используй `use client` только когда необходимо (Server Components по умолчанию)
+- Все данные с сервера через TanStack Query, не через прямой `fetch` в компонентах
+
+### Data Fetching
+- **Все запросы через TanStack Query**: используй `useQuery`, `useMutation`
+- Обрабатывай состояния `loading`, `error`, `success` в UI
+- Используй `QueryClient` для кеширования и инвалидации
+- API вызовы через Axios instance из `lib/api.ts`
+
+### Стилизация
+- Используй TailwindCSS utility классы
+- Избегай кастомных CSS файлов, где возможно
+- Используй shadcn/ui компоненты как базовые
+- Следуй дизайн-токенам из `design/tokens.md`
+
+### Дизайн и UX
+- **Минималистичный дизайн**: избегай избыточных декоративных элементов, фокус на функциональности
+- **Компактная типографика для данных**:
+  - Текст в таблицах должен быть компактным и удобным для чтения больших наборов информации
+  - Используй меньшие размеры шрифтов для таблиц и статистики (например, `text-sm`)
+  - Оптимизируй межстрочные интервалы (`leading-tight`, `leading-none`) для плотного отображения данных
+  - На страницах статистики приоритет на информативность, а не на декоративность
+
+### Обработка ошибок
+- Все ошибки должны логироваться через `lib/logger.ts`
+- Показывай понятные сообщения об ошибках пользователю (на русском)
+- Используй try-catch для асинхронных операций
+- Валидируй данные на клиенте и сервере
+
+### Аутентификация и авторизация
+- Используй NextAuth для аутентификации
+- Проверяй роли через `lib/auth/roles.ts`
+- Защищай API routes через middleware или проверку сессии
+- Защищай страницы через middleware или Server Components
+
+## Форматирование кода
+
+### Prettier настройки
+- Двойные кавычки для строк
+- Точка с запятой обязательна
+- Ширина строки: 80 символов
+- Отступы: 2 пробела
+- Trailing comma: ES5
+
+### ESLint
+- Следуй правилам `next/core-web-vitals`
+- Исправляй все предупреждения перед коммитом
+- Используй `npm run lint:fix` для автоматического исправления
+
+## Комментарии и документация
+
+### Комментарии в коде
+- Комментируй сложную бизнес-логику
+- Используй JSDoc для публичных функций
+- Избегай очевидных комментариев
+- Комментарии могут быть на русском для бизнес-логики
+
+### Документация
+- README.md для каждого домена/фичи (если необходимо)
+- Описывай назначение, основные компоненты, API контракты
+- Обновляй документацию при изменении API
+
+## Git и коммиты
+
+### Структура коммитов
+- Используй понятные сообщения на русском или английском
+- Группируй связанные изменения
+- Не коммить `.env`, `node_modules`, `.next`
+
+### Pull Requests
+- Маленькие, сфокусированные PR
+- Четкое описание изменений
+- Включай миграции схемы/API при необходимости
+- Не ломай существующие ключевые потоки
+
+## Тестирование
+
+- Unit тесты для сложной бизнес-логики
+- Integration тесты для критических API endpoints
+- E2E smoke тесты для основных потоков (login, просмотр профиля)
+- Приоритет на покрытие основных потоков, а не 100% coverage
+
+## Производительность
+
+- Используй Server Components где возможно
+- Оптимизируй изображения через Next.js Image
+- Используй динамические импорты для больших компонентов
+- Следи за bundle size
+
+## Безопасность
+
+- Никогда не коммить секреты в код
+- Валидируй все пользовательские данные
+- Используй параметризованные запросы (Prisma делает это автоматически)
+- Проверяй права доступа на каждом уровне (UI, API, DB)
+
+## Логирование
+
+- Используй структурированное логирование через `lib/logger.ts` (pino)
+- Логируй важные события: ошибки, действия пользователей, API вызовы
+- Не логируй чувствительные данные (пароли, токены)
+
+## Работа с базой данных
+
+- Все запросы через Prisma Client из `lib/db.ts`
+- Используй транзакции для связанных операций
+- **Временно (на этапе разработки)**: Изменения схемы через `prisma db push` (без миграций)
+  - Используй `npm run db:push` для применения изменений схемы
+  - После стабилизации схемы перейдем на `prisma migrate`
+- Seed данные через `prisma db seed`
+
+## Примеры
+
+### Правильный компонент
+```typescript
+// components/user/UserProfile.tsx
+"use client";
+
+import { useQuery } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
+import { getUserProfile } from "@/lib/api";
+
+export function UserProfile({ userId }: { userId: string }) {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["user", userId],
+    queryFn: () => getUserProfile(userId),
+  });
+
+  if (isLoading) return <div>Загрузка...</div>;
+  if (error) return <div>Ошибка загрузки профиля</div>;
+
+  return (
+    <div>
+      <h1>{data.name}</h1>
+      <Button>Редактировать</Button>
+    </div>
+  );
+}
+```
+
+### Правильный API route
+```typescript
+// app/api/users/[id]/route.ts
+import { NextResponse } from "next/server";
+import { getServerSession } from "@/lib/auth";
+import { db } from "@/lib/db";
+import { logger } from "@/lib/logger";
+
+export async function GET(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const session = await getServerSession();
+    if (!session) {
+      return NextResponse.json({ error: "Не авторизован" }, { status: 401 });
+    }
+
+    const user = await db.user.findUnique({
+      where: { id: params.id },
+    });
+
+    if (!user) {
+      return NextResponse.json({ error: "Пользователь не найден" }, { status: 404 });
+    }
+
+    return NextResponse.json(user);
+  } catch (error) {
+    logger.error({ error }, "Ошибка получения пользователя");
+    return NextResponse.json(
+      { error: "Внутренняя ошибка сервера" },
+      { status: 500 }
+    );
+  }
+}
+```
+
+## Чеклист перед коммитом
+
+- [ ] Код проходит `npm run lint`
+- [ ] Код отформатирован `npm run format`
+- [ ] TypeScript компилируется без ошибок
+- [ ] Все тексты в UI на русском
+- [ ] Обработаны состояния loading/error
+- [ ] Нет console.log в продакшн коде (используй logger)
+- [ ] Обновлена документация (если необходимо)
+- [ ] Проверены права доступа для новых endpoints

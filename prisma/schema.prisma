@@ -1,0 +1,345 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  password      String?
+  role          Role      @default(PLAYER)
+  teamId        String?   // Связь с командой для COACH
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  accounts      Account[]
+  sessions      Session[]
+
+  team          Team?     @relation(fields: [teamId], references: [id])
+
+  @@index([teamId])
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+model Player {
+  id              String     @id @default(cuid())
+  firstName       String     @db.VarChar(100)
+  lastName        String     @db.VarChar(100)
+  position        Position[]
+  dateOfBirth     DateTime
+  teamId          String?
+  image           String?
+  marketValue     Decimal?   @db.Decimal(12, 2)
+  contractExpires DateTime?
+  totalMatches    Int        @default(0)
+  totalGoals      Int        @default(0)
+  totalAssists    Int        @default(0)
+  totalMinutes    Int        @default(0)
+  videoLinks      String[]   @default([])
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  team            Team?      @relation(fields: [teamId], references: [id])
+  matchPlayers    MatchPlayer[]
+  matchEvents     MatchEvent[]
+
+  @@index([teamId])
+  @@index([firstName, lastName])
+  @@map("players")
+}
+
+model Tournament {
+  id          String    @id @default(cuid())
+  name        String    @db.VarChar(200)
+  description String?
+  season      String?   @db.VarChar(50)
+  location    String?   @db.VarChar(200)
+  logo        String?
+  startDate   DateTime?
+  endDate     DateTime?
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  teams       TournamentTeam[]
+  matches     Match[]
+
+  @@index([name])
+  @@index([season])
+  @@map("tournaments")
+}
+
+model Team {
+  id          String    @id @default(cuid())
+  name        String    @db.VarChar(200)
+  logo        String?   // URL to team logo
+  coach       String?   @db.VarChar(200) // Coach name (legacy, for display)
+  city        String?   @db.VarChar(100)
+  country     String?   @db.VarChar(100)
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  players     Player[]
+  tournaments TournamentTeam[]
+  coaches     User[]    // COACH users linked to this team
+  homeMatches Match[]   @relation("HomeTeam")
+  awayMatches Match[]   @relation("AwayTeam")
+  wonMatches  Match[]   @relation("MatchWinner")
+  matchPlayers MatchPlayer[]
+  matchEvents MatchEvent[]
+  matchFormations MatchFormation[]
+
+  @@index([name])
+  @@map("teams")
+}
+
+model TournamentTeam {
+  id           String     @id @default(cuid())
+  tournamentId String
+  teamId       String
+  createdAt    DateTime   @default(now())
+
+  tournament   Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  team         Team       @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@unique([tournamentId, teamId])
+  @@index([tournamentId])
+  @@index([teamId])
+  @@map("tournament_teams")
+}
+
+enum Role {
+  PLAYER
+  COACH
+  AGENT
+  ADMIN
+}
+
+enum Position {
+  GK
+  CB
+  LB
+  RB
+  CM
+  CDM
+  CAM
+  LM
+  RM
+  CF
+  SS
+  LW
+  RW
+}
+
+enum MatchStatus {
+  SCHEDULED
+  LIVE
+  FINISHED
+  CANCELLED
+}
+
+model Match {
+  id          String      @id @default(cuid())
+  date        DateTime
+  time        String?     @db.VarChar(10) // Time in HH:MM format
+  stadium     String?     @db.VarChar(200)
+  status      MatchStatus @default(SCHEDULED)
+  homeTeamId  String
+  awayTeamId  String
+  homeScore   Int?
+  awayScore   Int?
+  tournamentId String?
+  
+  // Extended match metadata
+  roundId     Int?
+  gameweek    Int?
+  seasonId    String?    @db.VarChar(50)
+  competitionId String?  @db.VarChar(50)
+  winnerId    String?    // teamId победителя
+  venue       String?    @db.VarChar(200)
+  duration    String?    @db.VarChar(20) // "Regular", "ExtraTime", "Penalties"
+  
+  // Extended scores
+  homeScoreHT Int?       // счет первого тайма
+  awayScoreHT Int?
+  homeScoreET Int?       // счет после дополнительного времени
+  awayScoreET Int?
+  homeScoreP  Int?       // пенальти
+  awayScoreP  Int?
+  
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  homeTeam    Team        @relation("HomeTeam", fields: [homeTeamId], references: [id], onDelete: Cascade)
+  awayTeam    Team        @relation("AwayTeam", fields: [awayTeamId], references: [id], onDelete: Cascade)
+  tournament  Tournament? @relation(fields: [tournamentId], references: [id], onDelete: SetNull)
+  winner      Team?       @relation("MatchWinner", fields: [winnerId], references: [id], onDelete: SetNull)
+  players     MatchPlayer[]
+  referees    MatchReferee[]
+  events      MatchEvent[]
+  formations  MatchFormation[]
+
+  @@index([homeTeamId])
+  @@index([awayTeamId])
+  @@index([tournamentId])
+  @@index([date])
+  @@index([status])
+  @@index([roundId])
+  @@index([gameweek])
+  @@index([seasonId])
+  @@index([winnerId])
+  @@map("matches")
+}
+
+model MatchPlayer {
+  id            String   @id @default(cuid())
+  matchId       String
+  playerId      String
+  teamId        String
+  goals         Int      @default(0)
+  assists       Int      @default(0)
+  ownGoals      Int      @default(0)
+  yellowCards   Int      @default(0)
+  redCards      Int      @default(0)
+  minutesPlayed Int      @default(0)
+  isStarter     Boolean  @default(false)
+  positionInFormation Int? // позиция в формации (1-11 для стартового состава)
+  substitutionMinute Int? // минута замены (null если не было замены)
+  substitutedForId String? // playerId кого заменил (для запасных)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  match         Match    @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  player        Player   @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  team          Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  substitutedFor MatchPlayer? @relation("Substitutions", fields: [substitutedForId], references: [id], onDelete: SetNull)
+  substitutions  MatchPlayer[] @relation("Substitutions")
+
+  @@unique([matchId, playerId])
+  @@index([matchId])
+  @@index([playerId])
+  @@index([teamId])
+  @@index([substitutedForId])
+  @@map("match_players")
+}
+
+model MatchReferee {
+  id        String   @id @default(cuid())
+  matchId   String
+  refereeId String   @db.VarChar(50) // внешний ID судьи
+  role      String   @db.VarChar(50) // "referee", "firstAssistant", "secondAssistant", "fourthOfficial"
+  createdAt DateTime @default(now())
+
+  match     Match    @relation(fields: [matchId], references: [id], onDelete: Cascade)
+
+  @@unique([matchId, refereeId, role])
+  @@index([matchId])
+  @@index([refereeId])
+  @@map("match_referees")
+}
+
+model MatchEvent {
+  id            String   @id @default(cuid())
+  matchId       String
+  eventId       Int      // тип события
+  subEventId    Int?     // подтип события
+  eventName     String   @db.VarChar(100)
+  subEventName  String?  @db.VarChar(100)
+  playerId      String?
+  teamId        String
+  matchPeriod   String   @db.VarChar(10) // "1H", "2H", "ET1", "ET2", "P"
+  eventSec      Decimal  @db.Decimal(10, 3) // секунда события
+  startX        Decimal? @db.Decimal(5, 2) // координата X начала события (0-100)
+  startY        Decimal? @db.Decimal(5, 2) // координата Y начала события (0-100)
+  endX          Decimal? @db.Decimal(5, 2) // координата X конца события (0-100)
+  endY          Decimal? @db.Decimal(5, 2) // координата Y конца события (0-100)
+  createdAt     DateTime @default(now())
+
+  match         Match    @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  player        Player?  @relation(fields: [playerId], references: [id], onDelete: SetNull)
+  team          Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  tags          MatchEventTag[]
+
+  @@index([matchId])
+  @@index([playerId])
+  @@index([teamId])
+  @@index([eventId])
+  @@index([matchPeriod])
+  @@index([matchId, matchPeriod])
+  @@map("match_events")
+}
+
+model MatchEventTag {
+  id        String     @id @default(cuid())
+  eventId   String
+  tagId     Int
+
+  event     MatchEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, tagId])
+  @@index([eventId])
+  @@index([tagId])
+  @@map("match_event_tags")
+}
+
+model MatchFormation {
+  id          String   @id @default(cuid())
+  matchId     String
+  teamId      String
+  formation   Json     // { lineup: [...], bench: [...] } - структура состава
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  match       Match    @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  team        Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@unique([matchId, teamId])
+  @@index([matchId])
+  @@index([teamId])
+  @@map("match_formations")
+}
