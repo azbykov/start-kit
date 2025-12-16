@@ -7,7 +7,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend } from "recharts";
+import {
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis,
+  Radar,
+  ResponsiveContainer,
+} from "recharts";
 
 interface PlayerStatsProps {
   statistics: PlayerProfile["statistics"];
@@ -52,97 +59,82 @@ export function PlayerStats({ statistics }: PlayerStatsProps) {
     { name: "Игра головой", value: Math.max(0, 100 - assistsPercent - passingPercent - defendingPercent - finishingPercent - individualPercent), color: "#f97316" },
   ].filter(item => item.value > 0);
 
+  // Calculate radar chart data
+  const radarData = [
+    { category: "Голы", value: Math.min(100, (statistics.totalGoals / statistics.totalMatches) * 10) || 0 },
+    { category: "Ассисты", value: Math.min(100, (statistics.totalAssists / statistics.totalMatches) * 10) || 0 },
+    { category: "Игра", value: Math.min(100, (statistics.totalMinutes / (statistics.totalMatches * 90)) * 100) || 0 },
+    { category: "Передачи", value: 75 }, // Mock data
+    { category: "Дриблинг", value: 60 }, // Mock data
+    { category: "Защита", value: 45 }, // Mock data
+  ];
+
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="text-base font-semibold">PLAYER STATS</CardTitle>
+      <CardHeader className="pb-2">
+        <CardTitle className="text-lg uppercase tracking-wide text-foreground/80">
+          Статистика игрока
+        </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left: Basic Statistics */}
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-3 text-sm">
-              <div>
-                <p className="text-xs text-muted-foreground mb-1">Нога</p>
-                <p className="text-sm font-semibold">Правая</p>
-              </div>
-          <div>
-            <p className="text-xs text-muted-foreground mb-1">Матчей сыграно</p>
-                <p className="text-sm font-semibold">{statistics.totalMatches}</p>
-          </div>
-          <div>
-            <p className="text-xs text-muted-foreground mb-1">Мин. за матч</p>
-                <p className="text-sm font-semibold">{minutesPerMatch}</p>
-          </div>
-          <div>
-            <p className="text-xs text-muted-foreground mb-1">Голов забито</p>
-                <p className="text-sm font-semibold">{statistics.totalGoals}</p>
-          </div>
-          <div>
-            <p className="text-xs text-muted-foreground mb-1">Голов за матч</p>
-                <p className="text-sm font-semibold">{goalsPerMatch}</p>
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground mb-1">Жёлтые карточки</p>
-                <p className="text-sm font-semibold">0</p>
-          </div>
-          <div>
-                <p className="text-xs text-muted-foreground mb-1">Красные карточки</p>
-                <p className="text-sm font-semibold">0</p>
-              </div>
-            </div>
+        <div className="grid grid-cols-2 gap-4">
+          {/* Stats Grid - Left Column */}
+          <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+            <StatItemSmall label="Нога" value="Правая" />
+            <StatItemSmall label="Матчей" value={statistics.totalMatches} />
+            <StatItemSmall label="Мин./матч" value={minutesPerMatch} />
+            <StatItemSmall label="Голов" value={statistics.totalGoals} />
+            <StatItemSmall label="Гол/матч" value={goalsPerMatch} />
+            <StatItemSmall label="ЖК" value="0" />
+            <StatItemSmall label="КК" value="0" />
+            <StatItemSmall label="Ассисты" value={statistics.totalAssists} />
+            <StatItemSmall label="Точн. пас" value="89%" />
+            <StatItemSmall label="Удары" value="12" />
+            <StatItemSmall label="Отборы" value="5" />
+            <StatItemSmall label="Перехв." value="8" />
+            <StatItemSmall label="Верховые" value="67%" />
+            <StatItemSmall label="Дриблинг" value="4" />
           </div>
 
-          {/* Middle: Performance Breakdown Donut Chart */}
-          <div className="flex flex-col items-center justify-center">
-            <ResponsiveContainer width="100%" height={200}>
-              <PieChart>
-                <Pie
-                  data={performanceData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={60}
-                  outerRadius={80}
-                  paddingAngle={2}
-                  dataKey="value"
-                >
-                  {performanceData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Legend
-                  verticalAlign="bottom"
-                  height={36}
-                  formatter={(value, entry: any) => `${value}: ${entry.payload.value}%`}
-                  wrapperStyle={{ fontSize: "10px" }}
+          {/* Radar Chart - Right Column */}
+          <div className="h-56">
+            <ResponsiveContainer width="100%" height="100%">
+              <RadarChart data={radarData} cx="50%" cy="50%" outerRadius="80%">
+                <PolarGrid stroke="hsl(var(--border))" />
+                <PolarAngleAxis
+                  dataKey="category"
+                  tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }}
                 />
-              </PieChart>
+                <PolarRadiusAxis
+                  angle={30}
+                  domain={[0, 100]}
+                  tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 9 }}
+                />
+                <Radar
+                  name="Характеристики"
+                  dataKey="value"
+                  stroke="hsl(var(--primary))"
+                  fill="hsl(var(--primary))"
+                  fillOpacity={0.3}
+                />
+              </RadarChart>
             </ResponsiveContainer>
-          </div>
-
-          {/* Right: Player Position Diagram */}
-          <div className="flex items-center justify-center">
-            <div className="relative w-full max-w-[200px] aspect-[2/3] bg-green-600 rounded border-2 border-green-700">
-              {/* Field markings */}
-              <div className="absolute inset-0 flex flex-col">
-                {/* Center circle */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/3 h-1/3 rounded-full border-2 border-white/50"></div>
-                {/* Center line */}
-                <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-white/50"></div>
-                {/* Penalty boxes */}
-                <div className="absolute top-0 left-1/4 right-1/4 h-1/4 border-r-2 border-l-2 border-b-2 border-white/50"></div>
-                <div className="absolute bottom-0 left-1/4 right-1/4 h-1/4 border-r-2 border-l-2 border-t-2 border-white/50"></div>
-                
-                {/* Player position indicators */}
-                <div className="absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-white border-2 border-gray-800"></div>
-                <div className="absolute top-1/2 left-1/4 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-blue-300 border border-blue-600"></div>
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-blue-300 border border-blue-600"></div>
-                <div className="absolute top-1/2 right-1/4 translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-blue-300 border border-blue-600"></div>
-              </div>
-            </div>
           </div>
         </div>
       </CardContent>
     </Card>
   );
 }
+
+const StatItemSmall = ({
+  label,
+  value,
+}: {
+  label: string;
+  value: string | number;
+}) => (
+  <div>
+    <div className="text-xs text-muted-foreground">{label}</div>
+    <div className="text-sm font-semibold text-foreground">{value}</div>
+  </div>
+);

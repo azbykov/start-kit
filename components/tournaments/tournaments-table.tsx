@@ -46,6 +46,23 @@ const formatDate = (dateStr: string | null) => {
   });
 };
 
+const statusLabels: Record<Tournament["status"], string> = {
+  PLANNED: "Запланирован",
+  ACTIVE: "Идёт",
+  FINISHED: "Завершён",
+  CANCELLED: "Отменён",
+};
+
+const statusVariants: Record<
+  Tournament["status"],
+  "default" | "secondary" | "outline" | "destructive"
+> = {
+  PLANNED: "secondary",
+  ACTIVE: "default",
+  FINISHED: "outline",
+  CANCELLED: "destructive",
+};
+
 const createColumns = (
   router: ReturnType<typeof useRouter>,
   onEdit?: (tournament: Tournament) => void,
@@ -117,14 +134,24 @@ const createColumns = (
     },
   },
   {
-    accessorKey: "isActive",
+    id: "status",
     header: "Статус",
     cell: ({ row }) => {
-      const isActive = row.getValue("isActive") as boolean;
+      const tournament = row.original;
       return (
-        <Badge variant={isActive ? "default" : "secondary"} className="text-xs">
-          {isActive ? "Активен" : "Неактивен"}
-        </Badge>
+        <div className="flex flex-wrap gap-1">
+          <Badge
+            variant={statusVariants[tournament.status]}
+            className="text-xs"
+          >
+            {statusLabels[tournament.status]}
+          </Badge>
+          {!tournament.isActive && (
+            <Badge variant="secondary" className="text-xs">
+              Скрыт
+            </Badge>
+          )}
+        </div>
       );
     },
   },

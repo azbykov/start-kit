@@ -27,6 +27,7 @@ import { Position } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { canManageTeam } from "@/lib/auth/roles-client";
 import type { Team } from "@/lib/types/teams";
+import { DetailPageNav } from "@/components/layout/detail-page-nav";
 
 interface TeamProfilePageProps {
   params: Promise<{ id: string }>;
@@ -109,12 +110,15 @@ export default function TeamProfilePage({ params }: TeamProfilePageProps) {
   }
 
   return (
-    <div className="space-y-4">
-      <TeamProfileComponent
-        team={team}
-        isEditable={canManage}
-        onEdit={() => setEditTeamDialogOpen(true)}
-      />
+    <div className="flex min-h-screen flex-col">
+      <DetailPageNav backHref="/teams" backLabel="Назад к командам" />
+
+      <div className="container mx-auto px-4 py-6 space-y-4 flex-1">
+        <TeamProfileComponent
+          team={team}
+          isEditable={canManage}
+          onEdit={() => setEditTeamDialogOpen(true)}
+        />
 
       {/* Players and Tournaments in 2 columns */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -348,30 +352,31 @@ export default function TeamProfilePage({ params }: TeamProfilePageProps) {
         </div>
       </div>
 
-      {/* Edit Team Dialog */}
-      {teamForForm && (
-        <TeamForm
-          team={teamForForm}
-          open={editTeamDialogOpen}
-          onOpenChange={setEditTeamDialogOpen}
+        {/* Edit Team Dialog */}
+        {teamForForm && (
+          <TeamForm
+            team={teamForForm}
+            open={editTeamDialogOpen}
+            onOpenChange={setEditTeamDialogOpen}
+            onSuccess={() => {
+              refetchTeam();
+              setEditTeamDialogOpen(false);
+            }}
+          />
+        )}
+
+        {/* Create Player Dialog */}
+        <PlayerForm
+          player={null}
+          open={createPlayerDialogOpen}
+          onOpenChange={setCreatePlayerDialogOpen}
+          initialTeamId={id}
           onSuccess={() => {
-            refetchTeam();
-            setEditTeamDialogOpen(false);
+            refetchPlayers();
+            setCreatePlayerDialogOpen(false);
           }}
         />
-      )}
-
-      {/* Create Player Dialog */}
-      <PlayerForm
-        player={null}
-        open={createPlayerDialogOpen}
-        onOpenChange={setCreatePlayerDialogOpen}
-        initialTeamId={id}
-        onSuccess={() => {
-          refetchPlayers();
-          setCreatePlayerDialogOpen(false);
-        }}
-      />
+      </div>
     </div>
   );
 }

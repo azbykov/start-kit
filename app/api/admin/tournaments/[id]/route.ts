@@ -5,6 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import logger from "@/lib/logger";
 import { updateTournamentSchema } from "@/lib/validations/tournament";
+import { Prisma } from "@prisma/client";
 
 /**
  * PATCH /api/admin/tournaments/[id]
@@ -38,9 +39,11 @@ export async function PATCH(
     // Validate request body (validation schema will handle string to Date conversion)
     const validationResult = updateTournamentSchema.safeParse(body);
     if (!validationResult.success) {
-      const firstError = validationResult.error.issues[0];
       return NextResponse.json(
-        { error: firstError?.message || "Некорректные данные" },
+        {
+          error: "Проверьте правильность заполнения полей",
+          fieldErrors: validationResult.error.flatten().fieldErrors,
+        },
         { status: 400 }
       );
     }
@@ -61,12 +64,16 @@ export async function PATCH(
     const previousValues = {
       name: existingTournament.name,
       season: existingTournament.season,
+      status: existingTournament.status,
     };
 
     const updateData: any = {};
 
     if (validationResult.data.name !== undefined) {
       updateData.name = validationResult.data.name;
+    }
+    if (validationResult.data.organizer !== undefined) {
+      updateData.organizer = validationResult.data.organizer || null;
     }
     if (validationResult.data.description !== undefined) {
       updateData.description = validationResult.data.description || null;
@@ -76,6 +83,27 @@ export async function PATCH(
     }
     if (validationResult.data.location !== undefined) {
       updateData.location = validationResult.data.location || null;
+    }
+    if (validationResult.data.sport !== undefined) {
+      updateData.sport = validationResult.data.sport || null;
+    }
+    if (validationResult.data.format !== undefined) {
+      updateData.format = validationResult.data.format || null;
+    }
+    if (validationResult.data.gender !== undefined) {
+      updateData.gender = validationResult.data.gender || null;
+    }
+    if (validationResult.data.ageGroup !== undefined) {
+      updateData.ageGroup = validationResult.data.ageGroup || null;
+    }
+    if (validationResult.data.birthYearFrom !== undefined) {
+      updateData.birthYearFrom = validationResult.data.birthYearFrom ?? null;
+    }
+    if (validationResult.data.birthYearTo !== undefined) {
+      updateData.birthYearTo = validationResult.data.birthYearTo ?? null;
+    }
+    if (validationResult.data.status !== undefined) {
+      updateData.status = validationResult.data.status;
     }
     if (validationResult.data.logo !== undefined) {
       updateData.logo = validationResult.data.logo || null;
@@ -107,6 +135,7 @@ export async function PATCH(
           after: {
             name: updatedTournament.name,
             season: updatedTournament.season,
+            status: updatedTournament.status,
           },
         },
       },
@@ -117,9 +146,17 @@ export async function PATCH(
     return NextResponse.json({
       id: updatedTournament.id,
       name: updatedTournament.name,
+      organizer: updatedTournament.organizer,
       description: updatedTournament.description,
       season: updatedTournament.season,
       location: updatedTournament.location,
+      sport: updatedTournament.sport,
+      format: updatedTournament.format,
+      gender: updatedTournament.gender,
+      ageGroup: updatedTournament.ageGroup,
+      birthYearFrom: updatedTournament.birthYearFrom,
+      birthYearTo: updatedTournament.birthYearTo,
+      status: updatedTournament.status,
       logo: updatedTournament.logo,
       startDate: updatedTournament.startDate
         ? updatedTournament.startDate.toISOString().split("T")[0]
@@ -132,6 +169,16 @@ export async function PATCH(
       updatedAt: updatedTournament.updatedAt.toISOString(),
     });
   } catch (error) {
+    if (error instanceof Prisma.PrismaClientValidationError) {
+      return NextResponse.json(
+        {
+          error:
+            "Схема Prisma не обновлена. Выполните `npm run db:push` и перезапустите сервер разработки.",
+        },
+        { status: 500 }
+      );
+    }
+
     logger.error({ error }, "Ошибка обновления турнира");
 
     return NextResponse.json(

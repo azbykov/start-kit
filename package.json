@@ -14,7 +14,9 @@
     "db:generate": "prisma generate",
     "db:seed": "prisma db seed",
     "add-player-stats": "tsx scripts/add-player-match-stats.ts",
-    "import:lovable": "tsx scripts/import-lovable.ts"
+    "import:lovable": "tsx scripts/import-lovable.ts",
+    "scrape:ffspb": "tsx scripts/scrape-ffspb-tournament.ts",
+    "import:ffspb": "tsx scripts/import-ffspb-tournament.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
@@ -31,16 +33,18 @@
     "@radix-ui/react-select": "^2.2.6",
     "@radix-ui/react-slot": "^1.2.4",
     "@radix-ui/react-tabs": "^1.1.13",
+    "@radix-ui/react-toast": "^1.2.15",
+    "@radix-ui/react-tooltip": "^1.2.8",
     "bcryptjs": "^3.0.3",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
+    "d3": "^7.9.0",
     "lucide-react": "0.555.0",
     "next": "16.0.6",
     "next-auth": "^5.0.0-beta.30",
     "prisma": "^6.19.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "d3": "^7.9.0",
     "react-hook-form": "^7.67.0",
     "recharts": "^3.5.1",
     "tailwind-merge": "3.4.0",
@@ -59,6 +63,7 @@
     "@types/react-dom": "19.0.0",
     "autoprefixer": "^10.4.22",
     "axios": "^1.13.2",
+    "cheerio": "^1.1.2",
     "eslint": "^9.39.1",
     "eslint-config-next": "^16.0.5",
     "eslint-config-prettier": "^10.1.8",

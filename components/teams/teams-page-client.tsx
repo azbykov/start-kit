@@ -43,30 +43,45 @@ export function TeamsPageClient({ isAdmin }: TeamsPageClientProps) {
   }
 
   return (
-    <div className="flex h-full flex-col">
-      {isAdmin && (
-        <div className="mb-2 flex justify-end">
-          <Button onClick={() => setCreateDialogOpen(true)}>
-            Создать команду
-          </Button>
+    <div className="flex min-h-screen flex-col">
+      {/* Page Header */}
+      <section className="py-12 lg:py-16 gradient-hero">
+        <div className="container mx-auto px-4">
+          <h1 className="text-3xl lg:text-4xl font-display font-bold text-primary-foreground mb-2">
+            Команды
+          </h1>
+          <p className="text-primary-foreground/80 text-lg">Все команды и статистика</p>
         </div>
-      )}
-      <div className="flex-1 overflow-auto">
-        <TeamsTable
-          data={data?.teams || []}
-          pagination={
-            data?.pagination || {
-              page,
-              pageSize,
-              total: 0,
-              totalPages: 0,
-            }
-          }
-          onPageChange={setPage}
-          isLoading={isLoading}
-          onEdit={isAdmin ? (team) => setEditTeam(team) : undefined}
-          onDelete={isAdmin ? (team) => setDeleteTeam(team) : undefined}
-        />
+      </section>
+
+      {/* Content */}
+      <div className="flex-1 bg-background">
+        <div className="container mx-auto px-4 py-8">
+          {isAdmin && (
+            <div className="mb-6 flex justify-end">
+              <Button onClick={() => setCreateDialogOpen(true)}>
+                Создать команду
+              </Button>
+            </div>
+          )}
+          <div className="flex-1 overflow-auto">
+            <TeamsTable
+              data={data?.teams || []}
+              pagination={
+                data?.pagination || {
+                  page,
+                  pageSize,
+                  total: 0,
+                  totalPages: 0,
+                }
+              }
+              onPageChange={setPage}
+              isLoading={isLoading}
+              onEdit={isAdmin ? (team) => setEditTeam(team) : undefined}
+              onDelete={isAdmin ? (team) => setDeleteTeam(team) : undefined}
+            />
+          </div>
+        </div>
       </div>
       {isAdmin && (
         <>

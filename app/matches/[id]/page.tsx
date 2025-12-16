@@ -17,8 +17,9 @@ import { useRouter } from "next/navigation";
 import { usePageTitle } from "@/components/layout/page-title-context";
 import { useSession } from "next-auth/react";
 import { Role } from "@prisma/client";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import type { MatchPlayer } from "@/lib/types/matches";
+import { DetailPageNav } from "@/components/layout/detail-page-nav";
 
 interface MatchProfilePageProps {
   params: Promise<{ id: string }>;
@@ -88,43 +89,30 @@ export default function MatchProfilePage({
   }
 
   return (
-    <div className="space-y-4">
-      <MatchProfileComponent
-        match={match}
-        players={players || undefined}
-        isAdmin={isAdmin}
-        onEdit={() => setEditMatchOpen(true)}
-      />
+    <div className="flex min-h-screen flex-col">
+      <Tabs defaultValue="events" className="flex-grow flex flex-col">
+        <DetailPageNav
+          backHref="/matches"
+          backLabel="Назад к матчам"
+          tabsListClassName="flex-wrap h-auto"
+          tabs={[
+            { value: "events", label: "Хронология" },
+            { value: "stats", label: "Статистика" },
+            { value: "players", label: "Составы" },
+            { value: "videos", label: "Видео" },
+          ]}
+        />
 
-      <Tabs defaultValue="players" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="players">Игроки</TabsTrigger>
-          <TabsTrigger value="timeline">Таймлайн</TabsTrigger>
-          <TabsTrigger value="stats">Статистика</TabsTrigger>
-          <TabsTrigger value="videos">Видео</TabsTrigger>
-        </TabsList>
+        <div className="container mx-auto px-4 py-6 space-y-4 flex-1">
+          <MatchProfileComponent
+            match={match}
+            players={players || undefined}
+            isAdmin={isAdmin}
+            onEdit={() => setEditMatchOpen(true)}
+          />
 
-        <TabsContent value="players" className="mt-4">
-          {playersLoading ? (
-            <div className="text-sm text-muted-foreground text-center py-4">
-              Загрузка игроков...
-            </div>
-          ) : players ? (
-            <MatchPlayers
-              players={players}
-              isAdmin={isAdmin}
-              matchId={id}
-              onEditPlayer={(player) => setEditPlayer(player)}
-              onDeletePlayer={(player) => setDeletePlayer(player)}
-              onAddPlayer={(teamId, teamName) => {
-                setAddPlayerTeam({ teamId, teamName });
-                setAddPlayerOpen(true);
-              }}
-            />
-          ) : null}
-        </TabsContent>
-
-        <TabsContent value="timeline" className="mt-4">
+        {/* Events Timeline */}
+          <TabsContent value="events" className="mt-0">
           {eventsLoading ? (
             <div className="text-sm text-muted-foreground text-center py-4">
               Загрузка событий...
@@ -146,9 +134,10 @@ export default function MatchProfilePage({
               onAddEvent={() => setAddEventOpen(true)}
             />
           )}
-        </TabsContent>
+          </TabsContent>
 
-        <TabsContent value="stats" className="mt-4">
+        {/* Statistics */}
+          <TabsContent value="stats" className="mt-0">
           {playersLoading ? (
             <div className="text-sm text-muted-foreground text-center py-4">
               Загрузка статистики...
@@ -156,11 +145,33 @@ export default function MatchProfilePage({
           ) : players ? (
             <MatchStats players={players} />
           ) : null}
-        </TabsContent>
+          </TabsContent>
 
-        <TabsContent value="videos" className="mt-4">
-          <MatchVideos videoLinks={[]} />
-        </TabsContent>
+        {/* Lineups */}
+          <TabsContent value="players" className="mt-0">
+          {playersLoading ? (
+            <div className="text-sm text-muted-foreground text-center py-4">
+              Загрузка составов...
+            </div>
+          ) : players ? (
+            <MatchPlayers
+              players={players}
+              isAdmin={isAdmin}
+              matchId={id}
+              onEditPlayer={(player) => setEditPlayer(player)}
+              onDeletePlayer={(player) => setDeletePlayer(player)}
+              onAddPlayer={(teamId, teamName) => {
+                setAddPlayerTeam({ teamId, teamName });
+                setAddPlayerOpen(true);
+              }}
+            />
+          ) : null}
+          </TabsContent>
+
+          <TabsContent value="videos" className="mt-0">
+            <MatchVideos videoLinks={[]} />
+          </TabsContent>
+        </div>
       </Tabs>
 
       {isAdmin && (

@@ -12,7 +12,8 @@ import { useRouter } from "next/navigation";
 import { usePageTitle } from "@/components/layout/page-title-context";
 import { useSession } from "next-auth/react";
 import { Role } from "@prisma/client";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
+import { DetailPageNav } from "@/components/layout/detail-page-nav";
 
 interface TournamentProfilePageProps {
   params: Promise<{ id: string }>;
@@ -27,7 +28,7 @@ export default function TournamentProfilePage({
   const { data: standings, isLoading: standingsLoading } = useTournamentStandings(id);
   const { data: matches, isLoading: matchesLoading } = useTournamentMatches(id);
   const { data: statistics, isLoading: statisticsLoading } = useTournamentStatistics(id);
-  const { data: teams, isLoading: teamsLoading } = useTournamentTeams(id);
+  const { data: teams } = useTournamentTeams(id);
   const { setTitle, setShowBackButton } = usePageTitle();
   const { data: session } = useSession();
   
@@ -80,39 +81,45 @@ export default function TournamentProfilePage({
   }
 
   return (
-    <div className="space-y-4">
-      <TournamentProfileComponent
-        tournament={tournament}
-        isAdmin={isAdmin}
-        onEdit={() => {
-          // TODO: Open edit tournament dialog
-          console.log("Edit tournament");
-        }}
-        onAddMatch={() => setAddMatchOpen(true)}
-        onAddTeam={() => setAddTeamOpen(true)}
-      />
-      
-      <Tabs defaultValue="standings" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="standings">Таблица</TabsTrigger>
-          <TabsTrigger value="statistics">Статистика</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="standings" className="mt-4 space-y-4">
-          <TournamentStandings
-            standings={standings || []}
-            matches={matches || []}
-            isLoading={standingsLoading || matchesLoading}
+    <div className="flex min-h-screen flex-col">
+      <Tabs defaultValue="standings" className="flex-grow flex flex-col">
+        <DetailPageNav
+          backHref="/tournaments"
+          backLabel="Назад к турнирам"
+          tabs={[
+            { value: "standings", label: "Таблица" },
+            { value: "statistics", label: "Статистика" },
+          ]}
+        />
+
+        <div className="container mx-auto px-4 py-6 space-y-4 flex-1">
+          <TournamentProfileComponent
+            tournament={tournament}
             isAdmin={isAdmin}
+            onEdit={() => {
+              // TODO: Open edit tournament dialog
+              console.log("Edit tournament");
+            }}
+            onAddMatch={() => setAddMatchOpen(true)}
+            onAddTeam={() => setAddTeamOpen(true)}
           />
-        </TabsContent>
         
-        <TabsContent value="statistics" className="mt-4">
-          <TournamentStatistics
-            statistics={statistics || []}
-            isLoading={statisticsLoading}
-          />
-        </TabsContent>
+          <TabsContent value="standings" className="mt-0 space-y-4">
+            <TournamentStandings
+              standings={standings || []}
+              matches={matches || []}
+              isLoading={standingsLoading || matchesLoading}
+              isAdmin={isAdmin}
+            />
+          </TabsContent>
+        
+          <TabsContent value="statistics" className="mt-0">
+            <TournamentStatistics
+              statistics={statistics || []}
+              isLoading={statisticsLoading}
+            />
+          </TabsContent>
+        </div>
       </Tabs>
 
       {isAdmin && teams && (

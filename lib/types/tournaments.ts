@@ -6,12 +6,24 @@
 /**
  * Tournament entity as returned from public API
  */
+export type TournamentStatus = "PLANNED" | "ACTIVE" | "FINISHED" | "CANCELLED";
+
+export type ParticipantGender = "MALE" | "FEMALE" | "MIXED";
+
 export interface Tournament {
   id: string;
   name: string;
+  organizer: string | null;
   description: string | null;
   season: string | null;
   location: string | null;
+  sport: string | null;
+  format: string | null;
+  gender: ParticipantGender | null;
+  ageGroup: string | null;
+  birthYearFrom: number | null;
+  birthYearTo: number | null;
+  status: TournamentStatus;
   logo: string | null;
   startDate: string | null; // ISO 8601 date
   endDate: string | null; // ISO 8601 date
@@ -26,9 +38,17 @@ export interface Tournament {
 export interface TournamentProfile {
   id: string;
   name: string;
+  organizer: string | null;
   description: string | null;
   season: string | null;
   location: string | null;
+  sport: string | null;
+  format: string | null;
+  gender: ParticipantGender | null;
+  ageGroup: string | null;
+  birthYearFrom: number | null;
+  birthYearTo: number | null;
+  status: TournamentStatus;
   logo: string | null;
   startDate: string | null; // ISO 8601 date
   endDate: string | null; // ISO 8601 date
@@ -66,9 +86,17 @@ export interface TournamentsListResponse {
  */
 export interface CreateTournamentRequest {
   name: string;
+  organizer?: string | null;
   description?: string | null;
   season?: string | null;
   location?: string | null;
+  sport?: string | null;
+  format?: string | null;
+  gender?: ParticipantGender | null;
+  ageGroup?: string | null;
+  birthYearFrom?: number | null;
+  birthYearTo?: number | null;
+  status?: TournamentStatus;
   logo?: string | null;
   startDate?: string | null; // ISO 8601 date string
   endDate?: string | null; // ISO 8601 date string
@@ -80,9 +108,17 @@ export interface CreateTournamentRequest {
  */
 export interface UpdateTournamentRequest {
   name?: string;
+  organizer?: string | null;
   description?: string | null;
   season?: string | null;
   location?: string | null;
+  sport?: string | null;
+  format?: string | null;
+  gender?: ParticipantGender | null;
+  ageGroup?: string | null;
+  birthYearFrom?: number | null;
+  birthYearTo?: number | null;
+  status?: TournamentStatus;
   logo?: string | null;
   startDate?: string | null; // ISO 8601 date string
   endDate?: string | null; // ISO 8601 date string
@@ -102,5 +138,6 @@ export interface DeleteTournamentResponse {
  */
 export interface ApiError {
   error: string; // Russian error message
+  fieldErrors?: Record<string, string[]>;
 }
 

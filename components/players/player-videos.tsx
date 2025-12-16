@@ -55,17 +55,15 @@ export function PlayerVideos({ videoLinks }: PlayerVideosProps) {
 
   return (
     <Card>
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-base font-semibold">Видеозаписи</CardTitle>
-          {videoLinks && videoLinks.length > 0 && (
-            <Button variant="outline" size="sm" className="text-xs">
-              Custom video report
-            </Button>
-          )}
-        </div>
+      <CardHeader className="flex flex-row items-center justify-between pb-4">
+        <CardTitle className="text-lg">Видеозаписи</CardTitle>
+        {videoLinks && videoLinks.length > 0 && (
+          <Button variant="outline" size="sm">
+            Пользовательский видеоотчёт
+          </Button>
+        )}
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-0">
         {!videoLinks || videoLinks.length === 0 ? (
           <p className="text-sm text-muted-foreground text-center py-4">
             Видео хайлайты отсутствуют
@@ -75,40 +73,30 @@ export function PlayerVideos({ videoLinks }: PlayerVideosProps) {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-[50px]">#</TableHead>
+                  <TableHead className="w-12">#</TableHead>
                   <TableHead>Категория</TableHead>
-                  <TableHead className="w-[100px] text-right">Действие</TableHead>
+                  <TableHead className="text-right">Действие</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {videoTableData.map((video) => (
                   <TableRow key={video.id}>
-                    <TableCell className="text-xs text-muted-foreground">
-                      {video.id + 1}
-                    </TableCell>
-                    <TableCell className="text-xs">{video.category}</TableCell>
+                    <TableCell className="text-muted-foreground">{video.id + 1}</TableCell>
+                    <TableCell>{video.category}</TableCell>
                     <TableCell className="text-right">
                       {video.link ? (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-7 text-xs"
-                          asChild
-                        >
+                        <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground hover:text-foreground" asChild>
                           <a
                             href={video.link}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center gap-1"
                           >
-                            <Play className="h-3 w-3" />
+                            <Play className="w-4 h-4" />
                             Смотреть
                           </a>
                         </Button>
                       ) : (
-                        <span className="text-xs text-muted-foreground">
-                          Нет видео
-                        </span>
+                        <span className="text-muted-foreground">—</span>
                       )}
                     </TableCell>
                   </TableRow>

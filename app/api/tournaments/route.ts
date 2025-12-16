@@ -43,9 +43,17 @@ export async function GET(request: NextRequest) {
     const formattedTournaments = tournaments.map((tournament) => ({
       id: tournament.id,
       name: tournament.name,
+      organizer: tournament.organizer,
       description: tournament.description,
       season: tournament.season,
       location: tournament.location,
+      sport: tournament.sport,
+      format: tournament.format,
+      gender: tournament.gender,
+      ageGroup: tournament.ageGroup,
+      birthYearFrom: tournament.birthYearFrom,
+      birthYearTo: tournament.birthYearTo,
+      status: tournament.status,
       logo: tournament.logo,
       startDate: tournament.startDate
         ? tournament.startDate.toISOString().split("T")[0]

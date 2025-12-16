@@ -49,38 +49,53 @@ export function TournamentsPageClient({
   }
 
   return (
-    <div className="flex h-full flex-col">
-      {isAdmin && (
-        <div className="mb-2 flex justify-end">
-          <Button onClick={() => setCreateDialogOpen(true)}>
-            Создать турнир
-          </Button>
+    <div className="flex min-h-screen flex-col">
+      {/* Page Header */}
+      <section className="py-12 lg:py-16 gradient-hero">
+        <div className="container mx-auto px-4">
+          <h1 className="text-3xl lg:text-4xl font-display font-bold text-primary-foreground mb-2">
+            Турниры
+          </h1>
+          <p className="text-primary-foreground/80 text-lg">Все турниры и соревнования</p>
         </div>
-      )}
-      <div className="flex-1 overflow-auto">
-        <TournamentsTable
-          data={data?.tournaments || []}
-          pagination={
-            data?.pagination || {
-              page,
-              pageSize,
-              total: 0,
-              totalPages: 0,
-            }
-          }
-          onPageChange={setPage}
-          isLoading={isLoading}
-          onEdit={
-            isAdmin
-              ? (tournament) => setEditTournament(tournament)
-              : undefined
-          }
-          onDelete={
-            isAdmin
-              ? (tournament) => setDeleteTournament(tournament)
-              : undefined
-          }
-        />
+      </section>
+
+      {/* Content */}
+      <div className="flex-1 bg-background">
+        <div className="container mx-auto px-4 py-8">
+          {isAdmin && (
+            <div className="mb-6 flex justify-end">
+              <Button onClick={() => setCreateDialogOpen(true)}>
+                Создать турнир
+              </Button>
+            </div>
+          )}
+          <div className="flex-1 overflow-auto">
+            <TournamentsTable
+              data={data?.tournaments || []}
+              pagination={
+                data?.pagination || {
+                  page,
+                  pageSize,
+                  total: 0,
+                  totalPages: 0,
+                }
+              }
+              onPageChange={setPage}
+              isLoading={isLoading}
+              onEdit={
+                isAdmin
+                  ? (tournament) => setEditTournament(tournament)
+                  : undefined
+              }
+              onDelete={
+                isAdmin
+                  ? (tournament) => setDeleteTournament(tournament)
+                  : undefined
+              }
+            />
+          </div>
+        </div>
       </div>
       {isAdmin && (
         <>

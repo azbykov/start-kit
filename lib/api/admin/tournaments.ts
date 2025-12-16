@@ -9,7 +9,22 @@ import type {
   CreateTournamentRequest,
   UpdateTournamentRequest,
   DeleteTournamentResponse,
+  ApiError,
 } from "@/lib/types/tournaments";
+
+type ApiFieldError = Error & { fieldErrors?: Record<string, string[]> };
+
+function toApiFieldError(error: any): ApiFieldError {
+  const data = error?.response?.data as ApiError | undefined;
+  const message =
+    (data && typeof data.error === "string" && data.error) ||
+    "Произошла ошибка";
+  const err = new Error(message) as ApiFieldError;
+  if (data?.fieldErrors) {
+    err.fieldErrors = data.fieldErrors;
+  }
+  return err;
+}
 
 /**
  * Create a new tournament
@@ -21,11 +36,7 @@ export async function createTournament(
     const response = await api.post<Tournament>("/admin/tournaments", data);
     return response.data;
   } catch (error: any) {
-    // Extract error message from API response
-    if (error?.response?.data?.error) {
-      throw new Error(error.response.data.error);
-    }
-    throw error;
+    throw toApiFieldError(error);
   }
 }
 
@@ -43,11 +54,7 @@ export async function updateTournament(
     );
     return response.data;
   } catch (error: any) {
-    // Extract error message from API response
-    if (error?.response?.data?.error) {
-      throw new Error(error.response.data.error);
-    }
-    throw error;
+    throw toApiFieldError(error);
   }
 }
 
@@ -63,11 +70,7 @@ export async function deleteTournament(
     );
     return response.data;
   } catch (error: any) {
-    // Extract error message from API response
-    if (error?.response?.data?.error) {
-      throw new Error(error.response.data.error);
-    }
-    throw error;
+    throw toApiFieldError(error);
   }
 }
 
@@ -85,11 +88,7 @@ export async function addTeamToTournament(
     );
     return response.data;
   } catch (error: any) {
-    // Extract error message from API response
-    if (error?.response?.data?.error) {
-      throw new Error(error.response.data.error);
-    }
-    throw error;
+    throw toApiFieldError(error);
   }
 }
 
@@ -109,10 +108,6 @@ export async function removeTeamFromTournament(
     );
     return response.data;
   } catch (error: any) {
-    // Extract error message from API response
-    if (error?.response?.data?.error) {
-      throw new Error(error.response.data.error);
-    }
-    throw error;
+    throw toApiFieldError(error);
   }
 }

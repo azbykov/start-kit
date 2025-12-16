@@ -4,6 +4,38 @@
 
 import { z } from "zod";
 
+const tournamentStatusSchema = z.enum([
+  "PLANNED",
+  "ACTIVE",
+  "FINISHED",
+  "CANCELLED",
+]);
+
+const participantGenderSchema = z.enum(["MALE", "FEMALE", "MIXED"]);
+
+const birthYearSchema = z.preprocess(
+  (value) => {
+    if (value === "") return undefined;
+    return value;
+  },
+  z
+    .union([z.coerce.number().int().min(1900).max(2100), z.null()])
+    .optional()
+) as z.ZodType<number | null | undefined>;
+
+const optionalBirthYearStringSchema = z
+  .string()
+  .optional()
+  .refine(
+    (value) => {
+      if (!value) return true;
+      if (!/^\d{4}$/.test(value)) return false;
+      const year = Number(value);
+      return year >= 1900 && year <= 2100;
+    },
+    { message: "Некорректный год рождения" }
+  );
+
 /**
  * Schema for pagination parameters (reused from players)
  */
@@ -21,6 +53,11 @@ export const createTournamentSchema = z
       .string()
       .min(1, "Название турнира обязательно")
       .max(200, "Название слишком длинное"),
+    organizer: z
+      .string()
+      .max(200, "Организатор слишком длинный")
+      .optional()
+      .nullable(),
     description: z
       .string()
       .max(5000, "Описание слишком длинное (максимум 5000 символов)")
@@ -36,6 +73,25 @@ export const createTournamentSchema = z
       .max(200, "Локация слишком длинная")
       .optional()
       .nullable(),
+    sport: z
+      .string()
+      .max(100, "Вид спорта слишком длинный")
+      .optional()
+      .nullable(),
+    format: z
+      .string()
+      .max(50, "Формат слишком длинный")
+      .optional()
+      .nullable(),
+    gender: participantGenderSchema.optional().nullable(),
+    ageGroup: z
+      .string()
+      .max(100, "Возрастная группа слишком длинная")
+      .optional()
+      .nullable(),
+    birthYearFrom: birthYearSchema,
+    birthYearTo: birthYearSchema,
+    status: tournamentStatusSchema.optional().default("ACTIVE"),
     logo: z
       .string()
       .url("Неверный URL логотипа")
@@ -87,6 +143,23 @@ export const createTournamentSchema = z
       message: "Дата начала должна быть раньше или равна дате окончания",
       path: ["endDate"],
     }
+  )
+  .refine(
+    (data) => {
+      if (
+        data.birthYearFrom !== undefined &&
+        data.birthYearFrom !== null &&
+        data.birthYearTo !== undefined &&
+        data.birthYearTo !== null
+      ) {
+        return data.birthYearFrom <= data.birthYearTo;
+      }
+      return true;
+    },
+    {
+      message: "Год рождения «с» должен быть меньше или равен «по»",
+      path: ["birthYearTo"],
+    }
   );
 
 /**
@@ -99,6 +172,11 @@ export const updateTournamentSchema = z
       .min(1, "Название турнира обязательно")
       .max(200, "Название слишком длинное")
       .optional(),
+    organizer: z
+      .string()
+      .max(200, "Организатор слишком длинный")
+      .optional()
+      .nullable(),
     description: z
       .string()
       .max(5000, "Описание слишком длинное (максимум 5000 символов)")
@@ -114,6 +192,25 @@ export const updateTournamentSchema = z
       .max(200, "Локация слишком длинная")
       .optional()
       .nullable(),
+    sport: z
+      .string()
+      .max(100, "Вид спорта слишком длинный")
+      .optional()
+      .nullable(),
+    format: z
+      .string()
+      .max(50, "Формат слишком длинный")
+      .optional()
+      .nullable(),
+    gender: participantGenderSchema.optional().nullable(),
+    ageGroup: z
+      .string()
+      .max(100, "Возрастная группа слишком длинная")
+      .optional()
+      .nullable(),
+    birthYearFrom: birthYearSchema,
+    birthYearTo: birthYearSchema,
+    status: tournamentStatusSchema.optional(),
     logo: z
       .string()
       .url("Неверный URL логотипа")
@@ -165,6 +262,23 @@ export const updateTournamentSchema = z
       message: "Дата начала должна быть раньше или равна дате окончания",
       path: ["endDate"],
     }
+  )
+  .refine(
+    (data) => {
+      if (
+        data.birthYearFrom !== undefined &&
+        data.birthYearFrom !== null &&
+        data.birthYearTo !== undefined &&
+        data.birthYearTo !== null
+      ) {
+        return data.birthYearFrom <= data.birthYearTo;
+      }
+      return true;
+    },
+    {
+      message: "Год рождения «с» должен быть меньше или равен «по»",
+      path: ["birthYearTo"],
+    }
   );
 
 /**
@@ -176,12 +290,23 @@ export const createTournamentFormSchema = z
       .string()
       .min(1, "Название турнира обязательно")
       .max(200, "Название слишком длинное"),
+    organizer: z.string().max(200, "Организатор слишком длинный").optional(),
     description: z
       .string()
       .max(5000, "Описание слишком длинное (максимум 5000 символов)")
       .optional(),
     season: z.string().max(50, "Сезон слишком длинный").optional(),
     location: z.string().max(200, "Локация слишком длинная").optional(),
+    sport: z.string().max(100, "Вид спорта слишком длинный").optional(),
+    format: z.string().max(50, "Формат слишком длинный").optional(),
+    gender: participantGenderSchema.optional(),
+    ageGroup: z
+      .string()
+      .max(100, "Возрастная группа слишком длинная")
+      .optional(),
+    birthYearFrom: optionalBirthYearStringSchema,
+    birthYearTo: optionalBirthYearStringSchema,
+    status: tournamentStatusSchema.optional().default("ACTIVE"),
     logo: z.string().url("Неверный URL логотипа").optional().or(z.literal("")),
     startDate: z.string().optional(),
     endDate: z.string().optional(),
@@ -202,6 +327,18 @@ export const createTournamentFormSchema = z
     {
       message: "Дата начала должна быть раньше или равна дате окончания",
       path: ["endDate"],
+    }
+  )
+  .refine(
+    (data) => {
+      if (data.birthYearFrom && data.birthYearTo) {
+        return Number(data.birthYearFrom) <= Number(data.birthYearTo);
+      }
+      return true;
+    },
+    {
+      message: "Год рождения «с» должен быть меньше или равен «по»",
+      path: ["birthYearTo"],
     }
   );
 

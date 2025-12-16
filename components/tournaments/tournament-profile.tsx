@@ -29,6 +29,29 @@ const formatDate = (dateStr: string | null) => {
   });
 };
 
+const statusLabels: Record<TournamentProfile["status"], string> = {
+  PLANNED: "Запланирован",
+  ACTIVE: "Идёт",
+  FINISHED: "Завершён",
+  CANCELLED: "Отменён",
+};
+
+const statusVariants: Record<
+  TournamentProfile["status"],
+  "default" | "secondary" | "outline" | "destructive"
+> = {
+  PLANNED: "secondary",
+  ACTIVE: "default",
+  FINISHED: "outline",
+  CANCELLED: "destructive",
+};
+
+const genderLabels: Record<NonNullable<TournamentProfile["gender"]>, string> = {
+  MALE: "Мужской",
+  FEMALE: "Женский",
+  MIXED: "Смешанный",
+};
+
 export function TournamentProfileComponent({
   tournament,
   isAdmin = false,
@@ -89,6 +112,12 @@ export function TournamentProfileComponent({
                 <span className="text-muted-foreground">Название: </span>
                 <span className="font-medium text-base">{tournament.name}</span>
               </div>
+              {tournament.organizer && (
+                <div>
+                  <span className="text-muted-foreground">Организатор: </span>
+                  <span className="font-medium">{tournament.organizer}</span>
+                </div>
+              )}
               {tournament.season && (
                 <div>
                   <span className="text-muted-foreground">Сезон: </span>
@@ -99,6 +128,44 @@ export function TournamentProfileComponent({
                 <div>
                   <span className="text-muted-foreground">Локация: </span>
                   <span className="font-medium">{tournament.location}</span>
+                </div>
+              )}
+              {(tournament.sport || tournament.format) && (
+                <div>
+                  <span className="text-muted-foreground">Вид спорта: </span>
+                  <span className="font-medium">
+                    {[tournament.sport, tournament.format]
+                      .filter(Boolean)
+                      .join(" ")}
+                  </span>
+                </div>
+              )}
+              {tournament.gender && (
+                <div>
+                  <span className="text-muted-foreground">Пол участников: </span>
+                  <span className="font-medium">
+                    {genderLabels[tournament.gender]}
+                  </span>
+                </div>
+              )}
+              {tournament.ageGroup && (
+                <div>
+                  <span className="text-muted-foreground">
+                    Возрастная группа:{" "}
+                  </span>
+                  <span className="font-medium">{tournament.ageGroup}</span>
+                </div>
+              )}
+              {(tournament.birthYearFrom || tournament.birthYearTo) && (
+                <div>
+                  <span className="text-muted-foreground">Годы рождения: </span>
+                  <span className="font-medium">
+                    {tournament.birthYearFrom && tournament.birthYearTo
+                      ? `${tournament.birthYearFrom}–${tournament.birthYearTo}`
+                      : tournament.birthYearFrom
+                      ? `с ${tournament.birthYearFrom}`
+                      : `по ${tournament.birthYearTo}`}
+                  </span>
                 </div>
               )}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
@@ -119,12 +186,14 @@ export function TournamentProfileComponent({
               </div>
               <div className="mt-3">
                 <span className="text-muted-foreground">Статус: </span>
-                <Badge
-                  variant={tournament.isActive ? "default" : "secondary"}
-                  className="ml-2"
-                >
-                  {tournament.isActive ? "Активен" : "Неактивен"}
-                </Badge>
+                <div className="inline-flex flex-wrap gap-2 ml-2 align-middle">
+                  <Badge variant={statusVariants[tournament.status]}>
+                    {statusLabels[tournament.status]}
+                  </Badge>
+                  {!tournament.isActive && (
+                    <Badge variant="secondary">Скрыт</Badge>
+                  )}
+                </div>
               </div>
             </div>
           </div>

@@ -5,6 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import logger from "@/lib/logger";
 import { createTournamentSchema } from "@/lib/validations/tournament";
+import { Prisma } from "@prisma/client";
 
 /**
  * POST /api/admin/tournaments
@@ -34,18 +35,28 @@ export async function POST(request: NextRequest) {
     // Validate request body (validation schema will handle string to Date conversion)
     const validationResult = createTournamentSchema.safeParse(body);
     if (!validationResult.success) {
-      const firstError = validationResult.error.issues[0];
       return NextResponse.json(
-        { error: firstError?.message || "Некорректные данные" },
+        {
+          error: "Проверьте правильность заполнения полей",
+          fieldErrors: validationResult.error.flatten().fieldErrors,
+        },
         { status: 400 }
       );
     }
 
     const {
       name,
+      organizer,
       description,
       season,
       location,
+      sport,
+      format,
+      gender,
+      ageGroup,
+      birthYearFrom,
+      birthYearTo,
+      status,
       logo,
       startDate,
       endDate,
@@ -56,9 +67,17 @@ export async function POST(request: NextRequest) {
     const tournament = await prisma.tournament.create({
       data: {
         name,
+        organizer: organizer || null,
         description: description || null,
         season: season || null,
         location: location || null,
+        sport: sport || null,
+        format: format || null,
+        gender: gender || null,
+        ageGroup: ageGroup || null,
+        birthYearFrom: birthYearFrom ?? null,
+        birthYearTo: birthYearTo ?? null,
+        status: status || "ACTIVE",
         logo: logo || null,
         startDate: startDate || null,
         endDate: endDate || null,
@@ -72,7 +91,7 @@ export async function POST(request: NextRequest) {
         action: "tournament.created",
         tournamentId: tournament.id,
         adminId: session.user.id,
-        data: { name, season },
+        data: { name, season, status },
       },
       "Tournament created by admin"
     );
@@ -82,9 +101,17 @@ export async function POST(request: NextRequest) {
       {
         id: tournament.id,
         name: tournament.name,
+        organizer: tournament.organizer,
         description: tournament.description,
         season: tournament.season,
         location: tournament.location,
+        sport: tournament.sport,
+        format: tournament.format,
+        gender: tournament.gender,
+        ageGroup: tournament.ageGroup,
+        birthYearFrom: tournament.birthYearFrom,
+        birthYearTo: tournament.birthYearTo,
+        status: tournament.status,
         logo: tournament.logo,
         startDate: tournament.startDate
           ? tournament.startDate.toISOString().split("T")[0]
@@ -99,6 +126,17 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
+    // Prisma schema/client mismatch (common during dev after schema change)
+    if (error instanceof Prisma.PrismaClientValidationError) {
+      return NextResponse.json(
+        {
+          error:
+            "Схема Prisma не обновлена. Выполните `npm run db:push` и перезапустите сервер разработки.",
+        },
+        { status: 500 }
+      );
+    }
+
     logger.error({ error }, "Ошибка создания турнира");
 
     return NextResponse.json(

@@ -69,6 +69,8 @@ model Player {
   id              String     @id @default(cuid())
   firstName       String     @db.VarChar(100)
   lastName        String     @db.VarChar(100)
+  ffspbPlayerId   Int?       @unique
+  ffspbProfileUrl String?
   position        Position[]
   dateOfBirth     DateTime
   teamId          String?
@@ -98,6 +100,14 @@ model Tournament {
   description String?
   season      String?   @db.VarChar(50)
   location    String?   @db.VarChar(200)
+  organizer   String?   @db.VarChar(200)
+  sport       String?   @db.VarChar(100) // e.g. "Мини-футбол"
+  format      String?   @db.VarChar(50)  // e.g. "8x8"
+  gender      ParticipantGender?
+  ageGroup    String?   @db.VarChar(100) // e.g. "до 12 лет"
+  birthYearFrom Int?
+  birthYearTo   Int?
+  status      TournamentStatus @default(ACTIVE)
   logo        String?
   startDate   DateTime?
   endDate     DateTime?
@@ -110,12 +120,16 @@ model Tournament {
 
   @@index([name])
   @@index([season])
+  @@index([status])
+  @@index([gender])
   @@map("tournaments")
 }
 
 model Team {
   id          String    @id @default(cuid())
   name        String    @db.VarChar(200)
+  ffspbTeamId Int?      @unique
+  ffspbTeamUrl String?
   logo        String?   // URL to team logo
   coach       String?   @db.VarChar(200) // Coach name (legacy, for display)
   city        String?   @db.VarChar(100)
@@ -174,6 +188,19 @@ enum Position {
   SS
   LW
   RW
+}
+
+enum TournamentStatus {
+  PLANNED
+  ACTIVE
+  FINISHED
+  CANCELLED
+}
+
+enum ParticipantGender {
+  MALE
+  FEMALE
+  MIXED
 }
 
 enum MatchStatus {

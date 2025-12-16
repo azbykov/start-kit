@@ -115,150 +115,113 @@ export function MatchProfileComponent({
   onEdit,
 }: MatchProfileProps) {
   const finalScore = getFinalScore(match);
-  
+
   return (
-    <div className="space-y-4">
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-          <CardTitle className="text-base font-semibold">О матче</CardTitle>
-          {isAdmin && onEdit && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={onEdit}
-            >
-              <Pencil />
-            </Button>
+    <Card className="mb-8 overflow-hidden">
+      <div className="gradient-hero p-6 lg:p-8">
+        <div className="flex items-center justify-center gap-2 mb-4">
+          {match.tournament && (
+            <Badge variant="secondary" className="bg-primary-foreground/20 text-primary-foreground">
+              <Trophy className="w-3 h-3 mr-1" />
+              {match.tournament.name}
+            </Badge>
           )}
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {/* Score */}
-            <div className="flex flex-col items-center gap-4 py-4">
-              <div className="flex items-center justify-center gap-6 w-full">
-                <div className="flex items-center gap-3">
-                  <Link href={`/teams/${match.homeTeam.id}`} className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-                    {match.homeTeam.logo ? (
-                      <div className="relative h-16 w-16 rounded-lg overflow-hidden border">
-                        <Image
-                          src={match.homeTeam.logo}
-                          alt={match.homeTeam.name}
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-                    ) : (
-                      <div className="h-16 w-16 rounded-lg border bg-muted flex items-center justify-center">
-                        <span className="text-xs font-medium">
-                          {match.homeTeam.name.substring(0, 2).toUpperCase()}
-                        </span>
-                      </div>
-                    )}
-                    <span className="text-lg font-semibold">{match.homeTeam.name}</span>
-                  </Link>
-                </div>
-                <div className="flex flex-col items-center gap-1">
-                  <div className="text-2xl font-bold">
-                    {finalScore ? (
-                      <>
-                        {finalScore.home} : {finalScore.away}
-                        {finalScore.suffix && (
-                          <span className="text-sm font-normal text-muted-foreground ml-2">
-                            {finalScore.suffix}
-                          </span>
-                        )}
-                      </>
-                    ) : (
-                      <span className="text-muted-foreground">—</span>
-                    )}
-                  </div>
-                  {/* Показываем основной счет если есть финальный по пенальти или доп. времени */}
-                  {finalScore && finalScore.suffix && (
-                    <div className="text-sm text-muted-foreground">
-                      Основное время: {match.homeScore ?? 0}:{match.awayScore ?? 0}
-                    </div>
-                  )}
-                  {/* Показываем промежуточные счета если есть */}
-                  {match.homeScoreHT !== null && match.awayScoreHT !== null && (
-                    <div className="text-xs text-muted-foreground">
-                      Первый тайм: {match.homeScoreHT}:{match.awayScoreHT}
-                    </div>
-                  )}
-                </div>
-                <div className="flex items-center gap-3">
-                  <Link href={`/teams/${match.awayTeam.id}`} className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-                    <span className="text-lg font-semibold">{match.awayTeam.name}</span>
-                    {match.awayTeam.logo ? (
-                      <div className="relative h-16 w-16 rounded-lg overflow-hidden border">
-                        <Image
-                          src={match.awayTeam.logo}
-                          alt={match.awayTeam.name}
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-                    ) : (
-                      <div className="h-16 w-16 rounded-lg border bg-muted flex items-center justify-center">
-                        <span className="text-xs font-medium">
-                          {match.awayTeam.name.substring(0, 2).toUpperCase()}
-                        </span>
-                      </div>
-                    )}
-                  </Link>
-                </div>
-              </div>
-            </div>
+        </div>
 
-            {/* Info */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-              <div className="flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-muted-foreground" />
-                <span className="text-muted-foreground">Дата: </span>
-                <span className="font-medium">{formatDate(match.date)}</span>
+        <div className="flex items-center justify-center gap-6 lg:gap-12">
+          {/* Home Team */}
+          <div className="flex flex-col items-center gap-3">
+            {match.homeTeam.logo ? (
+              <div className="relative h-20 w-20 lg:h-24 lg:w-24 rounded-lg overflow-hidden border-2 border-primary-foreground/20 bg-primary-foreground/20">
+                <Image
+                  src={match.homeTeam.logo}
+                  alt={match.homeTeam.name}
+                  fill
+                  className="object-cover"
+                />
               </div>
-              {match.time && (
-                <div className="flex items-center gap-2">
-                  <Clock className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-muted-foreground">Время: </span>
-                  <span className="font-medium">{match.time}</span>
-                </div>
-              )}
-              {match.stadium && (
-                <div className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-muted-foreground">Стадион: </span>
-                  <span className="font-medium">{match.stadium}</span>
-                </div>
-              )}
-              <div className="flex items-center gap-2">
-                <span className="text-muted-foreground">Статус: </span>
-                {getStatusBadge(match.status)}
-              </div>
-              {match.status === "FINISHED" && (
-                <div className="flex items-center gap-2">
-                  <Timer className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-muted-foreground">Время матча: </span>
-                  <span className="font-medium">{getMatchDuration(match.duration, players)}</span>
-                </div>
-              )}
-            </div>
-
-            {match.tournament && (
-              <div className="flex items-center gap-2 pt-2 border-t">
-                <Trophy className="h-4 w-4 text-muted-foreground" />
-                <span className="text-muted-foreground">Турнир: </span>
-                <Link
-                  href={`/tournaments/${match.tournament.id}`}
-                  className="font-medium hover:underline"
-                >
-                  {match.tournament.name}
-                </Link>
+            ) : (
+              <div className="h-20 w-20 lg:h-24 lg:w-24 rounded-lg border-2 border-primary-foreground/20 bg-primary-foreground/20 flex items-center justify-center">
+                <span className="text-2xl font-bold text-primary-foreground">
+                  {match.homeTeam.name.substring(0, 2).toUpperCase()}
+                </span>
               </div>
             )}
+            <span className="text-primary-foreground font-semibold text-lg">
+              {match.homeTeam.name}
+            </span>
           </div>
-        </CardContent>
-      </Card>
-    </div>
+
+          {/* Score */}
+          <div className="text-center">
+            <div className="text-primary-foreground text-5xl lg:text-6xl font-bold">
+              {finalScore.home} : {finalScore.away}
+            </div>
+            {finalScore.suffix && (
+              <div className="text-primary-foreground/80 text-sm mt-1">{finalScore.suffix}</div>
+            )}
+            {getStatusBadge(match.status)}
+          </div>
+
+          {/* Away Team */}
+          <div className="flex flex-col items-center gap-3">
+            {match.awayTeam.logo ? (
+              <div className="relative h-20 w-20 lg:h-24 lg:w-24 rounded-lg overflow-hidden border-2 border-primary-foreground/20 bg-primary-foreground/20">
+                <Image
+                  src={match.awayTeam.logo}
+                  alt={match.awayTeam.name}
+                  fill
+                  className="object-cover"
+                />
+              </div>
+            ) : (
+              <div className="h-20 w-20 lg:h-24 lg:w-24 rounded-lg border-2 border-primary-foreground/20 bg-primary-foreground/20 flex items-center justify-center">
+                <span className="text-2xl font-bold text-primary-foreground">
+                  {match.awayTeam.name.substring(0, 2).toUpperCase()}
+                </span>
+              </div>
+            )}
+            <span className="text-primary-foreground font-semibold text-lg">
+              {match.awayTeam.name}
+            </span>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-center gap-6 mt-6 text-primary-foreground/80 text-sm flex-wrap">
+          <div className="flex items-center gap-1">
+            <Calendar className="w-4 h-4" />
+            {formatDate(match.date)}
+          </div>
+          {match.time && (
+            <div className="flex items-center gap-1">
+              <Clock className="w-4 h-4" />
+              {match.time}
+            </div>
+          )}
+          {(match.stadium || match.venue) && (
+            <div className="flex items-center gap-1">
+              <MapPin className="w-4 h-4" />
+              {match.stadium || match.venue}
+            </div>
+          )}
+          {match.status === "FINISHED" && (
+            <div className="flex items-center gap-1">
+              <Timer className="w-4 h-4" />
+              {getMatchDuration(match.duration, players)}
+            </div>
+          )}
+        </div>
+
+        {isAdmin && onEdit && (
+          <div className="flex justify-end mt-4">
+            <Button variant="outline" size="sm" onClick={onEdit} className="bg-primary-foreground/10 text-primary-foreground border-primary-foreground/20">
+              <Pencil className="w-4 h-4 mr-2" />
+              Редактировать
+            </Button>
+          </div>
+        )}
+      </div>
+    </Card>
   );
 }
 

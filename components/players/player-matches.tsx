@@ -158,145 +158,108 @@ export function PlayerMatches({ data, playerId }: PlayerMatchesProps) {
       {/* Past matches */}
       {data.past.length > 0 && (
         <Card>
-          <CardHeader>
-            <CardTitle className="text-base font-semibold flex items-center gap-2">
-              <Trophy className="h-4 w-4" />
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <BarChart3 className="w-5 h-5" />
               Прошедшие матчи
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="rounded-md border">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="text-xs">Дата</TableHead>
-                    <TableHead className="text-xs">Турнир</TableHead>
-                    <TableHead className="text-xs">Команды</TableHead>
-                    <TableHead className="text-xs text-center">Счет</TableHead>
-                    <TableHead className="text-xs text-right">Статистика</TableHead>
-                    <TableHead className="text-xs text-right">Действия</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {data.past.map((item) => (
-                    <TableRow key={item.match.id}>
-                      <TableCell className="text-xs">
-                        {formatDate(item.match.date)}
-                      </TableCell>
-                      <TableCell className="text-xs">
-                        {item.match.tournament ? (
-                          <Link
-                            href={`/tournaments/${item.match.tournament.id}`}
-                            className="flex items-center gap-2 hover:underline"
-                          >
-                            {item.match.tournament.logo && (
-                              <Image
-                                src={item.match.tournament.logo}
-                                alt={item.match.tournament.name}
-                                width={16}
-                                height={16}
-                                className="rounded"
-                              />
-                            )}
-                            <span>{item.match.tournament.name}</span>
-                          </Link>
-                        ) : (
-                          <span className="text-muted-foreground">—</span>
-                        )}
-                      </TableCell>
-                      <TableCell className="text-xs">
+          <CardContent className="p-0">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Дата</TableHead>
+                  <TableHead>Турнир</TableHead>
+                  <TableHead>Команды</TableHead>
+                  <TableHead>Счет</TableHead>
+                  <TableHead>Статистика</TableHead>
+                  <TableHead className="text-right">Действия</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {data.past.map((item) => (
+                  <TableRow key={item.match.id}>
+                    <TableCell className="text-muted-foreground whitespace-nowrap">
+                      {formatDate(item.match.date)}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {item.match.tournament ? (
                         <Link
-                          href={`/matches/${item.match.id}`}
-                          className="hover:underline"
+                          href={`/tournaments/${item.match.tournament.id}`}
+                          className="flex items-center gap-2 hover:underline"
                         >
-                          <div className="flex items-center gap-2">
-                            <span
-                              className={
-                                item.match.homeTeam.id === item.team.id
-                                  ? "font-semibold"
-                                  : ""
-                              }
-                            >
-                              {item.match.homeTeam.name}
-                            </span>
-                            <span className="text-muted-foreground">—</span>
-                            <span
-                              className={
-                                item.match.awayTeam.id === item.team.id
-                                  ? "font-semibold"
-                                  : ""
-                              }
-                            >
-                              {item.match.awayTeam.name}
-                            </span>
-                          </div>
+                          {item.match.tournament.logo && (
+                            <Image
+                              src={item.match.tournament.logo}
+                              alt={item.match.tournament.name}
+                              width={16}
+                              height={16}
+                              className="rounded"
+                            />
+                          )}
+                          <span>{item.match.tournament.name}</span>
                         </Link>
-                      </TableCell>
-                      <TableCell className="text-xs text-center">
-                        {item.match.homeScore !== null &&
-                        item.match.awayScore !== null ? (
-                          <span>
-                            {item.match.homeScore}:{item.match.awayScore}
-                          </span>
-                        ) : (
-                          <span className="text-muted-foreground">—</span>
-                        )}
-                      </TableCell>
-                      <TableCell className="text-xs text-right">
-                        <div className="flex flex-col gap-1 items-end">
-                          {item.playerStats.goals > 0 && (
-                            <span className="text-xs">
-                              Голов: {item.playerStats.goals}
-                            </span>
-                          )}
-                          {item.playerStats.assists > 0 && (
-                            <span className="text-xs">
-                              Передач: {item.playerStats.assists}
-                            </span>
-                          )}
-                          {item.playerStats.minutesPlayed > 0 && (
-                            <span className="text-xs text-muted-foreground">
-                              {item.playerStats.minutesPlayed} мин
-                            </span>
-                          )}
-                          {item.playerStats.yellowCards > 0 && (
-                            <span className="text-xs text-yellow-600">
-                              ЖК: {item.playerStats.yellowCards}
-                            </span>
-                          )}
-                          {item.playerStats.redCards > 0 && (
-                            <span className="text-xs text-red-600">
-                              КК: {item.playerStats.redCards}
-                            </span>
-                          )}
-                          {!item.playerStats.goals &&
-                            !item.playerStats.assists &&
-                            item.playerStats.minutesPlayed === 0 && (
-                              <span className="text-xs text-muted-foreground">
-                                {item.playerStats.isStarter
-                                  ? "В старте"
-                                  : "На скамейке"}
-                              </span>
-                            )}
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-xs text-right">
-                        <Link href={`/players/${playerId}/matches/${item.match.id}/stats`}>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="h-7 text-xs"
+                      ) : (
+                        <span className="text-muted-foreground">—</span>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <Link href={`/matches/${item.match.id}`} className="hover:underline">
+                        <div className="flex items-center gap-1">
+                          <span
+                            className={
+                              item.match.homeTeam.id === item.team.id
+                                ? "font-semibold"
+                                : "text-muted-foreground"
+                            }
                           >
-                            <BarChart3 className="h-3 w-3 mr-1" />
-                            Статистика
-                          </Button>
-                        </Link>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+                            {item.match.homeTeam.name}
+                          </span>
+                          <span className="mx-1">—</span>
+                          <span
+                            className={
+                              item.match.awayTeam.id === item.team.id
+                                ? "font-semibold"
+                                : "font-medium"
+                            }
+                          >
+                            {item.match.awayTeam.name}
+                          </span>
+                        </div>
+                      </Link>
+                    </TableCell>
+                    <TableCell>
+                      {item.match.homeScore !== null && item.match.awayScore !== null ? (
+                        <span>
+                          {item.match.homeScore}:{item.match.awayScore}
+                        </span>
+                      ) : (
+                        <span className="text-muted-foreground">—</span>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <div className="text-sm">
+                        <div>Голов: {item.playerStats.goals}</div>
+                        <div className="text-muted-foreground">
+                          Передач: {item.playerStats.assists}
+                        </div>
+                      </div>
+                      <div className="text-xs text-primary mt-1">
+                        {item.playerStats.minutesPlayed} мин
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Link href={`/players/${playerId}/matches/${item.match.id}/stats`}>
+                        <Button variant="outline" size="sm" className="gap-1">
+                          <BarChart3 className="w-4 h-4" />
+                          Статистика
+                        </Button>
+                      </Link>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </CardContent>
         </Card>
       )}

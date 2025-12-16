@@ -24,15 +24,17 @@ export function PlayerProfileComponent({ player }: PlayerProfileProps) {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="text-base font-semibold">GENERAL INFO</CardTitle>
+      <CardHeader className="pb-4">
+        <CardTitle className="text-lg uppercase tracking-wide text-foreground/80">
+          Общая информация
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="flex gap-6">
           {/* Photo */}
           <div className="flex-shrink-0">
             {player.image ? (
-              <div className="relative h-40 w-40 rounded-lg overflow-hidden border">
+              <div className="relative h-28 w-28 rounded-lg overflow-hidden border border-border">
                 <Image
                   src={player.image}
                   alt={`${player.firstName} ${player.lastName}`}
@@ -41,78 +43,56 @@ export function PlayerProfileComponent({ player }: PlayerProfileProps) {
                 />
               </div>
             ) : (
-              <div className="h-40 w-40 rounded-lg border bg-muted flex items-center justify-center">
-                <User className="h-20 w-20 text-muted-foreground" />
+              <div className="h-28 w-28 rounded-lg border border-border bg-muted flex items-center justify-center">
+                <User className="h-16 w-16 text-muted-foreground/50" />
               </div>
             )}
           </div>
 
           {/* Info */}
-          <div className="flex-1 space-y-2.5 text-sm">
-            <div>
-              <span className="text-muted-foreground">Фамилия: </span>
-              <span className="font-medium">{player.lastName}</span>
+          <div className="flex-1 space-y-3 text-sm">
+            <InfoRow label="Фамилия" value={player.lastName} />
+            <InfoRow label="Имя" value={player.firstName} />
+            <InfoRow
+              label="Дата рождения"
+              value={`${dateOfBirth.toLocaleDateString("ru-RU")} (${age} лет)`}
+            />
+            <InfoRow label="Страна рождения" value="Не указано" />
+            <InfoRow label="Страна паспорта" value="Не указано" />
+
+            <div className="grid grid-cols-2 gap-4">
+              <InfoRow label="Рост" value="Не указано" />
+              <InfoRow label="Вес" value="Не указано" />
             </div>
-            <div>
-              <span className="text-muted-foreground">Имя: </span>
-              <span className="font-medium">{player.firstName}</span>
-            </div>
-            <div>
-              <span className="text-muted-foreground">Дата рождения: </span>
-              <span>
-                {dateOfBirth.toLocaleDateString("ru-RU", {
-                  day: "2-digit",
-                  month: "2-digit",
-                  year: "numeric",
-                })}{" "}
-                ({age})
-              </span>
-            </div>
-            <div>
-              <span className="text-muted-foreground">Страна рождения: </span>
-              <span>Не указано</span>
-            </div>
-            <div>
-              <span className="text-muted-foreground">Страна паспорта: </span>
-              <span>Не указано</span>
-            </div>
-            <div className="grid grid-cols-2 gap-4 mt-3">
-              <div>
-                <span className="text-muted-foreground">Рост: </span>
-                <span>Не указано</span>
-              </div>
-              <div>
-                <span className="text-muted-foreground">Вес: </span>
-                <span>Не указано</span>
+
+            <div className="pt-1">
+              <span className="text-sm text-muted-foreground">Позиция:</span>
+              <div className="mt-1">
+                <PositionBadges positions={player.position as Position[]} />
               </div>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
-              <div>
-                <span className="text-muted-foreground">Позиция: </span>
-                <PositionBadges 
-                  positions={player.position as Position[]} 
-                />
-              </div>
-              {player.team && (
-                <div>
-                  <span className="text-muted-foreground">Текущий клуб: </span>
-                  <TeamLink team={player.team} size="sm" />
-                </div>
-              )}
+
+            <div className="grid grid-cols-2 gap-4">
+              <InfoRow label="Контракт до" value="Не указано" />
+              <InfoRow label="Агент игрока" value="Не указано" />
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
-              <div>
-                <span className="text-muted-foreground">Контракт до: </span>
-                <span>Не указано</span>
+
+            {player.team && (
+              <div className="pt-2 flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">Текущий клуб:</span>
+                <TeamLink team={player.team} size="sm" />
               </div>
-              <div>
-                <span className="text-muted-foreground">Агент игрока: </span>
-                <span>Не указано</span>
-              </div>
-            </div>
+            )}
           </div>
         </div>
       </CardContent>
     </Card>
   );
 }
+
+const InfoRow = ({ label, value }: { label: string; value: string }) => (
+  <div>
+    <span className="text-sm text-muted-foreground">{label}:</span>{" "}
+    <span className="font-medium text-foreground">{value}</span>
+  </div>
+);
