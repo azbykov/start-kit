@@ -33,7 +33,7 @@ const EventIcon = ({ type }: { type: number }) => {
 export function MatchTimeline({
   events,
   homeTeamId,
-  awayTeamId,
+  awayTeamId: _awayTeamId,
   isAdmin = false,
   onAddEvent,
 }: MatchTimelineProps) {

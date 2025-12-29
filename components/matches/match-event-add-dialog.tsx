@@ -27,18 +27,18 @@ import { useQuery } from "@tanstack/react-query";
 import { getTeamPlayers } from "@/lib/api/teams";
 
 const addMatchEventFormSchema = z.object({
-  eventId: z.coerce.number().int().min(1),
-  subEventId: z.coerce.number().int().optional().nullable(),
+  eventId: z.string().min(1),
+  subEventId: z.string().optional().nullable(),
   eventName: z.string().min(1).max(100),
   subEventName: z.string().max(100).optional().nullable(),
   playerId: z.string().optional().nullable(),
   teamId: z.string().min(1),
   matchPeriod: z.string().max(10),
-  eventSec: z.coerce.number().min(0),
-  startX: z.coerce.number().min(0).max(100).optional().nullable(),
-  startY: z.coerce.number().min(0).max(100).optional().nullable(),
-  endX: z.coerce.number().min(0).max(100).optional().nullable(),
-  endY: z.coerce.number().min(0).max(100).optional().nullable(),
+  eventSec: z.string().min(1),
+  startX: z.string().optional().nullable(),
+  startY: z.string().optional().nullable(),
+  endX: z.string().optional().nullable(),
+  endY: z.string().optional().nullable(),
 });
 
 type AddMatchEventFormInput = z.infer<typeof addMatchEventFormSchema>;
@@ -97,14 +97,14 @@ export function MatchEventAddDialog({
   const form = useForm<AddMatchEventFormInput>({
     resolver: zodResolver(addMatchEventFormSchema),
     defaultValues: {
-      eventId: 1,
+      eventId: "1",
       subEventId: null,
       eventName: "",
       subEventName: null,
       playerId: null,
       teamId: "",
       matchPeriod: "1H",
-      eventSec: 0,
+      eventSec: "0",
       startX: null,
       startY: null,
       endX: null,
@@ -131,11 +131,11 @@ export function MatchEventAddDialog({
   }, [watchedTeamId]);
 
   React.useEffect(() => {
-    const eventType = eventTypes.find((e) => e.id === watchedEventId);
+    const eventType = eventTypes.find((e) => e.id === parseInt(watchedEventId, 10));
     if (eventType) {
       setValue("eventName", eventType.name);
       if (eventType.subEvents.length > 0) {
-        setValue("subEventId", eventType.subEvents[0].id);
+        setValue("subEventId", eventType.subEvents[0].id.toString());
         setValue("subEventName", eventType.subEvents[0].name);
       } else {
         setValue("subEventId", null);
@@ -149,14 +149,18 @@ export function MatchEventAddDialog({
       await addMutation.mutateAsync({
         matchId,
         data: {
-          ...data,
-          subEventId: data.subEventId || null,
+          eventId: parseInt(data.eventId, 10),
+          subEventId: data.subEventId ? parseInt(data.subEventId, 10) : null,
+          eventName: data.eventName,
           subEventName: data.subEventName || null,
           playerId: data.playerId || null,
-          startX: data.startX || null,
-          startY: data.startY || null,
-          endX: data.endX || null,
-          endY: data.endY || null,
+          teamId: data.teamId,
+          matchPeriod: data.matchPeriod,
+          eventSec: parseFloat(data.eventSec),
+          startX: data.startX ? parseFloat(data.startX) : null,
+          startY: data.startY ? parseFloat(data.startY) : null,
+          endX: data.endX ? parseFloat(data.endX) : null,
+          endY: data.endY ? parseFloat(data.endY) : null,
           tags: [],
         },
       });
@@ -169,7 +173,7 @@ export function MatchEventAddDialog({
   };
 
   const isLoading = addMutation.isPending;
-  const selectedEventType = eventTypes.find((e) => e.id === watchedEventId);
+  const selectedEventType = eventTypes.find((e) => e.id === parseInt(watchedEventId, 10));
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -210,7 +214,7 @@ export function MatchEventAddDialog({
               </Label>
               <Select
                 value={watchedEventId.toString()}
-                onValueChange={(value) => setValue("eventId", parseInt(value, 10))}
+                onValueChange={(value) => setValue("eventId", value)}
                 disabled={isLoading}
               >
                 <SelectTrigger>
@@ -230,13 +234,13 @@ export function MatchEventAddDialog({
             </div>
           </div>
 
-          {selectedEventType?.subEvents.length > 0 && (
+          {selectedEventType && selectedEventType.subEvents.length > 0 && (
             <div className="space-y-2">
               <Label htmlFor="subEventId">Подтип события</Label>
               <Select
                 value={watch("subEventId")?.toString() || "none"}
                 onValueChange={(value) =>
-                  setValue("subEventId", value === "none" ? null : parseInt(value, 10))
+                  setValue("subEventId", value === "none" ? null : value)
                 }
                 disabled={isLoading}
               >

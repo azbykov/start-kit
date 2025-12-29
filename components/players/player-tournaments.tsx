@@ -9,7 +9,6 @@ import {
 import {
   Table,
   TableBody,
-  TableCell,
   TableHead,
   TableHeader,
   TableRow,
@@ -20,7 +19,7 @@ interface PlayerTournamentsProps {
   playerId: string;
 }
 
-export function PlayerTournaments({ playerId }: PlayerTournamentsProps) {
+export function PlayerTournaments({ playerId: _playerId }: PlayerTournamentsProps) {
   // TODO: Replace with actual data from API when tournaments/matches are implemented
   // For now, showing placeholder message
   const hasData = false;

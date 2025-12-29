@@ -5,10 +5,9 @@
 
 import { api } from "@/lib/api";
 import type {
-  Player,
-  PlayerProfile,
-  PlayersListResponse,
   PaginationInput,
+  PlayersListResponse,
+  PlayerProfile,
   PlayerMatchesResponse,
   PlayerEventsResponse,
   PlayerMatchStatsResponse,

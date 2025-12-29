@@ -1,5 +1,4 @@
 import { auth } from "@/lib/auth";
-import { verifyUserHasAnyRole } from "@/lib/auth/roles";
 import { Role, Prisma } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
@@ -35,7 +34,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if user has required role
-    if (![Role.ADMIN, Role.COACH].includes(user.role)) {
+    if (!([Role.ADMIN, Role.COACH] as Role[]).includes(user.role)) {
       return NextResponse.json(
         { error: "Доступ запрещен" },
         { status: 403 }

@@ -46,20 +46,13 @@ export function ActionHeatmap({
 
     if (eventsWithCoords.length === 0) return;
 
-    // Create density data points
-    const dataPoints = eventsWithCoords.map((event) => [
-      xScale(event.startX!),
-      yScale(event.startY!),
-    ]);
-
     // Create color scale (from transparent blue to red/yellow)
     const colorScale = d3
       .scaleSequential(d3.interpolateYlOrRd)
-      .domain([0, d3.max(Array.from({ length: eventsWithCoords.length })) || 1]);
+      .domain([0, eventsWithCoords.length || 1]);
 
     // Simple approach: draw circles with opacity based on density
     // Group nearby events
-    const radius = 15;
     const intensityMap = new Map<string, number>();
 
     eventsWithCoords.forEach((event) => {

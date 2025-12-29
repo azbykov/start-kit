@@ -68,7 +68,7 @@ const getStatusBadge = (status: string) => {
 export function TournamentMatches({
   matches,
   isLoading = false,
-  isAdmin = false,
+  isAdmin: _isAdmin = false,
 }: TournamentMatchesProps) {
   if (isLoading) {
     return (

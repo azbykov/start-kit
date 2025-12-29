@@ -101,7 +101,7 @@ export const createTournamentSchema = z
     startDate: z
       .union([
         z.date({
-          invalid_type_error: "Некорректная дата начала",
+          message: "Некорректная дата начала",
         }),
         z.string().transform((str) => {
           if (!str) return undefined;
@@ -117,7 +117,7 @@ export const createTournamentSchema = z
     endDate: z
       .union([
         z.date({
-          invalid_type_error: "Некорректная дата окончания",
+          message: "Некорректная дата окончания",
         }),
         z.string().transform((str) => {
           if (!str) return undefined;
@@ -220,7 +220,7 @@ export const updateTournamentSchema = z
     startDate: z
       .union([
         z.date({
-          invalid_type_error: "Некорректная дата начала",
+          message: "Некорректная дата начала",
         }),
         z.string().transform((str) => {
           if (!str) return undefined;
@@ -236,7 +236,7 @@ export const updateTournamentSchema = z
     endDate: z
       .union([
         z.date({
-          invalid_type_error: "Некорректная дата окончания",
+          message: "Некорректная дата окончания",
         }),
         z.string().transform((str) => {
           if (!str) return undefined;

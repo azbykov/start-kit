@@ -6,7 +6,6 @@ import { FootballPitch } from "./football-pitch";
 import type { PlayerMatchEvent } from "@/lib/types/players";
 import {
   filterEventsByType,
-  isShotOnTarget,
   getEventColor,
   formatEventTooltip,
 } from "@/lib/utils/football-pitch";
@@ -20,7 +19,7 @@ interface ShotMapProps {
 
 export function ShotMap({
   events,
-  period = "all",
+  period: _period = "all",
   width = 800,
   height = 400,
 }: ShotMapProps) {
@@ -53,7 +52,6 @@ export function ShotMap({
       const x = xScale(event.startX);
       const y = yScale(event.startY);
       const isGoal = event.eventName.toLowerCase().includes("goal");
-      const isOnTarget = isShotOnTarget(event);
       const color = getEventColor(event, "shot");
 
       // Determine end point (goal center if no end coordinates)
@@ -69,7 +67,7 @@ export function ShotMap({
       }
 
       // Draw arrow line for shot
-      const line = eventsGroup
+      eventsGroup
         .append("line")
         .attr("class", "shot-event")
         .attr("x1", x)
@@ -83,7 +81,7 @@ export function ShotMap({
 
       // Draw start point
       const pointRadius = isGoal ? 6 : 4;
-      const point = eventsGroup
+      eventsGroup
         .append("circle")
         .attr("class", "shot-event")
         .attr("cx", x)
@@ -108,7 +106,7 @@ export function ShotMap({
       }
 
       // Add hover interactions
-      const hoverCircle = eventsGroup
+      eventsGroup
         .append("circle")
         .attr("class", "shot-event")
         .attr("cx", x)

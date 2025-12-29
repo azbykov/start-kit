@@ -68,7 +68,7 @@ export const authConfig = {
     })
   ],
   callbacks: {
-    async signIn({ user, account, profile }) {
+    async signIn({ user, account, profile: _profile }) {
       // Handle OAuth sign-in (e.g., Yandex)
       if (account?.provider === "yandex" && user.email) {
         try {

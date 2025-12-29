@@ -13,12 +13,7 @@ import {
   getPlayerMatchStats,
 } from "@/lib/api/players";
 import type {
-  PlayerProfile,
-  PlayersListResponse,
   PaginationInput,
-  PlayerMatchesResponse,
-  PlayerEventsResponse,
-  PlayerMatchStatsResponse,
 } from "@/lib/types/players";
 
 /**

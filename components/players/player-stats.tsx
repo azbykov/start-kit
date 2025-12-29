@@ -31,33 +31,37 @@ export function PlayerStats({ statistics }: PlayerStatsProps) {
 
   // Calculate performance breakdown percentages
   // Using simplified calculation based on available stats
-  const totalActions = statistics.totalAssists + statistics.totalGoals + statistics.totalMatches;
+  // Performance calculation (currently unused, but may be used in future)
+  // const totalActions = statistics.totalAssists + statistics.totalGoals + statistics.totalMatches;
   
-  const assistsPercent = totalActions > 0 
-    ? Math.round((statistics.totalAssists / totalActions) * 100)
-    : 0;
-  const goalsPercent = totalActions > 0
-    ? Math.round((statistics.totalGoals / totalActions) * 100)
-    : 0;
-  const matchesPercent = totalActions > 0
-    ? Math.round((statistics.totalMatches / totalActions) * 100)
-    : 0;
+  // Performance percentages (currently unused, but may be used in future)
+  // const assistsPercent = totalActions > 0 
+  //   ? Math.round((statistics.totalAssists / totalActions) * 100)
+  //   : 0;
+  // const goalsPercent = totalActions > 0
+  //   ? Math.round((statistics.totalGoals / totalActions) * 100)
+  //   : 0;
+  // const matchesPercent = totalActions > 0
+  //   ? Math.round((statistics.totalMatches / totalActions) * 100)
+  //   : 0;
   
-  // Normalize to 100%
-  const remaining = 100 - assistsPercent - goalsPercent - matchesPercent;
-  const passingPercent = Math.max(0, Math.round(remaining * 0.4));
-  const defendingPercent = Math.max(0, Math.round(remaining * 0.3));
-  const finishingPercent = Math.max(0, Math.round(remaining * 0.2));
-  const individualPercent = Math.max(0, Math.round(remaining * 0.1));
+  // Normalize to 100% (currently unused, but may be used in future)
+  // const remaining = 100 - assistsPercent - goalsPercent - matchesPercent;
+  // Performance percentages (currently unused, but may be used in future)
+  // const passingPercent = Math.max(0, Math.round(remaining * 0.4));
+  // const defendingPercent = Math.max(0, Math.round(remaining * 0.3));
+  // const finishingPercent = Math.max(0, Math.round(remaining * 0.2));
+  // const individualPercent = Math.max(0, Math.round(remaining * 0.1));
 
-  const performanceData = [
-    { name: "Передачи", value: assistsPercent, color: "#3b82f6" },
-    { name: "Пасы", value: passingPercent, color: "#eab308" },
-    { name: "Защита", value: defendingPercent, color: "#a16207" },
-    { name: "Завершение", value: finishingPercent, color: "#1e40af" },
-    { name: "Индивидуальная игра", value: individualPercent, color: "#60a5fa" },
-    { name: "Игра головой", value: Math.max(0, 100 - assistsPercent - passingPercent - defendingPercent - finishingPercent - individualPercent), color: "#f97316" },
-  ].filter(item => item.value > 0);
+  // Performance data calculation (currently unused, but may be used in future)
+  // const performanceData = [
+  //   { name: "Передачи", value: assistsPercent, color: "#3b82f6" },
+  //   { name: "Пасы", value: passingPercent, color: "#eab308" },
+  //   { name: "Защита", value: defendingPercent, color: "#a16207" },
+  //   { name: "Завершение", value: finishingPercent, color: "#1e40af" },
+  //   { name: "Индивидуальная игра", value: individualPercent, color: "#60a5fa" },
+  //   { name: "Игра головой", value: Math.max(0, 100 - assistsPercent - passingPercent - defendingPercent - finishingPercent - individualPercent), color: "#f97316" },
+  // ].filter(item => item.value > 0);
 
   // Calculate radar chart data
   const radarData = [

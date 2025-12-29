@@ -16,7 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Play, ExternalLink } from "lucide-react";
+import { Play } from "lucide-react";
 
 interface PlayerVideosProps {
   videoLinks: PlayerProfile["videoLinks"];

@@ -286,8 +286,6 @@ export function TournamentForm({
   const watchedSeason = watch("season") || "";
   const watchedAgeGroup = watch("ageGroup") || "";
 
-  const formError = createMutation.error || updateMutation.error;
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">

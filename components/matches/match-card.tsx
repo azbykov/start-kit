@@ -40,7 +40,6 @@ export function MatchCard({ match }: MatchCardProps) {
   };
 
   const isUpcoming = match.status === "SCHEDULED";
-  const isFinished = match.status === "FINISHED";
 
   return (
     <div className="group bg-card border border-border rounded-xl p-4 lg:p-6 hover:shadow-card transition-all duration-300 hover:border-primary/30">
@@ -162,5 +161,6 @@ export function MatchCard({ match }: MatchCardProps) {
     </div>
   );
 }
+
 
 

@@ -38,7 +38,7 @@ export const createMatchSchema = z
   .object({
     date: z.union([
       z.date({
-        invalid_type_error: "Некорректная дата",
+        message: "Некорректная дата",
       }),
       z.string().transform((str) => {
         if (!str) throw new Error("Дата обязательна");
@@ -106,7 +106,7 @@ export const updateMatchSchema = z
     date: z
       .union([
         z.date({
-          invalid_type_error: "Некорректная дата",
+          message: "Некорректная дата",
         }),
         z.string().transform((str) => {
           if (!str) return undefined;
@@ -185,22 +185,8 @@ export const createMatchFormSchema = z
     status: matchStatusSchema.default("SCHEDULED"),
     homeTeamId: z.string().min(1, "Команда хозяев обязательна"),
     awayTeamId: z.string().min(1, "Команда гостей обязательна"),
-    homeScore: z
-      .string()
-      .optional()
-      .transform((val) => {
-        if (!val || val === "") return null;
-        const num = parseInt(val, 10);
-        return isNaN(num) ? null : num;
-      }),
-    awayScore: z
-      .string()
-      .optional()
-      .transform((val) => {
-        if (!val || val === "") return null;
-        const num = parseInt(val, 10);
-        return isNaN(num) ? null : num;
-      }),
+    homeScore: z.string().optional(),
+    awayScore: z.string().optional(),
     tournamentId: z.string().optional().or(z.literal("")),
   })
   .refine(
@@ -232,7 +218,21 @@ export const createMatchFormSchema = z
     }
   );
 
-export const updateMatchFormSchema = createMatchFormSchema.partial();
+export const updateMatchFormSchema = z.object({
+  date: z.string().optional(),
+  time: z
+    .string()
+    .regex(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/, "Неверный формат времени (HH:MM)")
+    .optional()
+    .or(z.literal("")),
+  stadium: z.string().max(200, "Название стадиона слишком длинное").optional(),
+  status: matchStatusSchema.optional(),
+  homeTeamId: z.string().min(1, "Команда хозяев обязательна").optional(),
+  awayTeamId: z.string().min(1, "Команда гостей обязательна").optional(),
+  homeScore: z.string().optional(),
+  awayScore: z.string().optional(),
+  tournamentId: z.string().optional().or(z.literal("")),
+});
 
 /**
  * Schema for adding a player to a match
@@ -240,23 +240,23 @@ export const updateMatchFormSchema = createMatchFormSchema.partial();
 export const addMatchPlayerSchema = z.object({
   playerId: z.string().min(1, "Игрок обязателен"),
   teamId: z.string().min(1, "Команда обязательна"),
-  goals: z.coerce.number().int().min(0).default(0),
-  assists: z.coerce.number().int().min(0).default(0),
-  yellowCards: z.coerce.number().int().min(0).default(0),
-  redCards: z.coerce.number().int().min(0).max(1).default(0),
-  minutesPlayed: z.coerce.number().int().min(0).max(120).default(0),
-  isStarter: z.boolean().default(false),
+  goals: z.string().min(1),
+  assists: z.string().min(1),
+  yellowCards: z.string().min(1),
+  redCards: z.string().min(1),
+  minutesPlayed: z.string().min(1),
+  isStarter: z.boolean(),
 });
 
 /**
  * Schema for updating player statistics in a match
  */
 export const updateMatchPlayerSchema = z.object({
-  goals: z.coerce.number().int().min(0).optional(),
-  assists: z.coerce.number().int().min(0).optional(),
-  yellowCards: z.coerce.number().int().min(0).optional(),
-  redCards: z.coerce.number().int().min(0).max(1).optional(),
-  minutesPlayed: z.coerce.number().int().min(0).max(120).optional(),
+  goals: z.string().optional(),
+  assists: z.string().optional(),
+  yellowCards: z.string().optional(),
+  redCards: z.string().optional(),
+  minutesPlayed: z.string().optional(),
   isStarter: z.boolean().optional(),
 });
 

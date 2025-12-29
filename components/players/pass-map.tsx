@@ -24,7 +24,7 @@ interface PassMapProps {
 
 export function PassMap({
   events,
-  period = "all",
+  period: _period = "all",
   filterType = "all",
   width = 800,
   height = 400,
@@ -123,7 +123,7 @@ export function PassMap({
         .attr("opacity", 0.7);
 
       // Add hover interactions
-      const hoverCircle = eventsGroup
+      eventsGroup
         .append("circle")
         .attr("class", "pass-event")
         .attr("cx", startX)

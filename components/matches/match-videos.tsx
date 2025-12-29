@@ -6,7 +6,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Video } from "lucide-react";
 
 interface MatchVideosProps {
   videoLinks?: string[];

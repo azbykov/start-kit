@@ -12,9 +12,6 @@ import {
   getMatchEvents,
 } from "@/lib/api/matches";
 import type {
-  MatchProfile,
-  MatchesListResponse,
-  MatchPlayersResponse,
   MatchEvent,
   PaginationInput,
 } from "@/lib/types/matches";

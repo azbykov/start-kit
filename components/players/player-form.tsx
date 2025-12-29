@@ -65,22 +65,22 @@ export function PlayerForm({
           firstName: player.firstName,
           lastName: player.lastName,
           position: player.position,
-          dateOfBirth: player.dateOfBirth,
+          dateOfBirth: player.dateOfBirth || "",
           teamId: player.teamId || "",
           image: player.image || "",
-          totalMatches: player.totalMatches,
-          totalGoals: player.totalGoals,
-          totalAssists: player.totalAssists,
-          totalMinutes: player.totalMinutes,
+          totalMatches: player.totalMatches?.toString() || "0",
+          totalGoals: player.totalGoals?.toString() || "0",
+          totalAssists: player.totalAssists?.toString() || "0",
+          totalMinutes: player.totalMinutes?.toString() || "0",
           videoLinks: player.videoLinks,
         }
       : {
           position: [Position.CF],
           teamId: initialTeamId || "",
-          totalMatches: 0,
-          totalGoals: 0,
-          totalAssists: 0,
-          totalMinutes: 0,
+          totalMatches: "0",
+          totalGoals: "0",
+          totalAssists: "0",
+          totalMinutes: "0",
           videoLinks: [],
         },
   });
@@ -101,23 +101,23 @@ export function PlayerForm({
         firstName: player.firstName,
         lastName: player.lastName,
         position: player.position,
-        dateOfBirth: player.dateOfBirth,
+        dateOfBirth: player.dateOfBirth || "",
         teamId: player.teamId || "",
         image: player.image || "",
-        totalMatches: player.totalMatches,
-        totalGoals: player.totalGoals,
-        totalAssists: player.totalAssists,
-        totalMinutes: player.totalMinutes,
+        totalMatches: player.totalMatches?.toString() || "0",
+        totalGoals: player.totalGoals?.toString() || "0",
+        totalAssists: player.totalAssists?.toString() || "0",
+        totalMinutes: player.totalMinutes?.toString() || "0",
         videoLinks: player.videoLinks,
       });
     } else if (!isEditMode) {
       reset({
         position: [Position.CF],
         teamId: initialTeamId || "",
-        totalMatches: 0,
-        totalGoals: 0,
-        totalAssists: 0,
-        totalMinutes: 0,
+        totalMatches: "0",
+        totalGoals: "0",
+        totalAssists: "0",
+        totalMinutes: "0",
         videoLinks: [],
       });
     }
@@ -146,9 +146,14 @@ export function PlayerForm({
         (link) => link.trim() !== ""
       );
 
-      const apiData = {
+      const apiData: any = {
         ...data,
         videoLinks: filteredVideoLinks,
+        totalMatches: typeof data.totalMatches === "string" ? parseInt(data.totalMatches, 10) || 0 : data.totalMatches || 0,
+        totalGoals: typeof data.totalGoals === "string" ? parseInt(data.totalGoals, 10) || 0 : data.totalGoals || 0,
+        totalAssists: typeof data.totalAssists === "string" ? parseInt(data.totalAssists, 10) || 0 : data.totalAssists || 0,
+        totalMinutes: typeof data.totalMinutes === "string" ? parseInt(data.totalMinutes, 10) || 0 : data.totalMinutes || 0,
+        marketValue: "marketValue" in data && data.marketValue && typeof data.marketValue === "string" ? parseFloat(data.marketValue) : "marketValue" in data ? data.marketValue : undefined,
       };
 
       if (isEditMode && player) {
@@ -157,7 +162,7 @@ export function PlayerForm({
           data: apiData as any, // Type will be validated by API
         });
       } else {
-        await createMutation.mutateAsync(apiData as CreatePlayerFormInput);
+        await createMutation.mutateAsync(apiData as any);
       }
       reset();
       onOpenChange(false);
@@ -336,7 +341,7 @@ export function PlayerForm({
                 placeholder="https://example.com/photo.jpg"
                 disabled={isLoading}
               />
-              {errors.image && (
+              {"image" in errors && errors.image && (
                 <p className="text-sm text-destructive">
                   {errors.image.message as string}
                 </p>
@@ -352,7 +357,7 @@ export function PlayerForm({
                 type="number"
                 min="0"
                 max="1000"
-                {...register("totalMatches", { valueAsNumber: true })}
+                {...register("totalMatches")}
                 disabled={isLoading}
               />
               {errors.totalMatches && (
@@ -369,7 +374,7 @@ export function PlayerForm({
                 type="number"
                 min="0"
                 max="500"
-                {...register("totalGoals", { valueAsNumber: true })}
+                {...register("totalGoals")}
                 disabled={isLoading}
               />
               {errors.totalGoals && (
@@ -386,7 +391,7 @@ export function PlayerForm({
                 type="number"
                 min="0"
                 max="500"
-                {...register("totalAssists", { valueAsNumber: true })}
+                {...register("totalAssists")}
                 disabled={isLoading}
               />
               {errors.totalAssists && (
@@ -403,7 +408,7 @@ export function PlayerForm({
                 type="number"
                 min="0"
                 max="100000"
-                {...register("totalMinutes", { valueAsNumber: true })}
+                {...register("totalMinutes")}
                 disabled={isLoading}
               />
               {errors.totalMinutes && (

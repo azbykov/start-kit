@@ -139,8 +139,8 @@ export function MatchForm({
             status: data.status,
             homeTeamId: data.homeTeamId || undefined,
             awayTeamId: data.awayTeamId || undefined,
-            homeScore: data.homeScore || null,
-            awayScore: data.awayScore || null,
+            homeScore: data.homeScore ? parseInt(data.homeScore, 10) : null,
+            awayScore: data.awayScore ? parseInt(data.awayScore, 10) : null,
             tournamentId: data.tournamentId || null,
           },
         });
@@ -152,8 +152,8 @@ export function MatchForm({
           status: data.status || "SCHEDULED",
           homeTeamId: data.homeTeamId!,
           awayTeamId: data.awayTeamId!,
-          homeScore: data.homeScore || null,
-          awayScore: data.awayScore || null,
+          homeScore: data.homeScore ? parseInt(data.homeScore, 10) : null,
+          awayScore: data.awayScore ? parseInt(data.awayScore, 10) : null,
           tournamentId: data.tournamentId || null,
         });
       }

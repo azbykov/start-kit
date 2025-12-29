@@ -12,7 +12,6 @@ export default auth((req) => {
         console.log("[Middleware] No auth found, redirecting to sign-in", {
           pathname,
           hasAuth: !!req.auth,
-          authUser: req.auth?.user?.email,
         })
       }
       const signInUrl = new URL("/sign-in", req.url)

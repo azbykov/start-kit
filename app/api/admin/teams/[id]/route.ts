@@ -1,6 +1,5 @@
 import { auth } from "@/lib/auth";
-import { verifyUserCanManageTeam, verifyUserRole } from "@/lib/auth/roles";
-import { Role } from "@prisma/client";
+import { verifyUserCanManageTeam } from "@/lib/auth/roles";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import logger from "@/lib/logger";
@@ -159,11 +158,6 @@ export async function DELETE(
     // Check if team exists and get player count
     const existingTeam = await prisma.team.findUnique({
       where: { id },
-      include: {
-        _count: {
-          select: { players: true },
-        },
-      },
       select: {
         id: true,
         name: true,

@@ -14,10 +14,7 @@ import {
   getTournamentTeams,
   getTournamentStatistics,
 } from "@/lib/api/tournaments";
-import type { Tournament } from "@/lib/types/tournaments";
 import type {
-  TournamentProfile,
-  TournamentsListResponse,
   PaginationInput,
 } from "@/lib/types/tournaments";
 

@@ -44,11 +44,11 @@ export function MatchPlayerEditDialog({
   const form = useForm<UpdateMatchPlayerInput>({
     resolver: zodResolver(updateMatchPlayerSchema),
     defaultValues: {
-      goals: player.goals,
-      assists: player.assists,
-      yellowCards: player.yellowCards,
-      redCards: player.redCards,
-      minutesPlayed: player.minutesPlayed,
+      goals: player.goals?.toString() || "",
+      assists: player.assists?.toString() || "",
+      yellowCards: player.yellowCards?.toString() || "",
+      redCards: player.redCards?.toString() || "",
+      minutesPlayed: player.minutesPlayed?.toString() || "",
       isStarter: player.isStarter,
     },
   });
@@ -66,11 +66,11 @@ export function MatchPlayerEditDialog({
   React.useEffect(() => {
     if (player) {
       reset({
-        goals: player.goals,
-        assists: player.assists,
-        yellowCards: player.yellowCards,
-        redCards: player.redCards,
-        minutesPlayed: player.minutesPlayed,
+        goals: player.goals?.toString() || "",
+        assists: player.assists?.toString() || "",
+        yellowCards: player.yellowCards?.toString() || "",
+        redCards: player.redCards?.toString() || "",
+        minutesPlayed: player.minutesPlayed?.toString() || "",
         isStarter: player.isStarter,
       });
     }
@@ -83,7 +83,14 @@ export function MatchPlayerEditDialog({
       await updateMutation.mutateAsync({
         matchId,
         playerId: player.playerId,
-        data,
+        data: {
+          goals: data.goals ? parseInt(data.goals, 10) : undefined,
+          assists: data.assists ? parseInt(data.assists, 10) : undefined,
+          yellowCards: data.yellowCards ? parseInt(data.yellowCards, 10) : undefined,
+          redCards: data.redCards ? parseInt(data.redCards, 10) : undefined,
+          minutesPlayed: data.minutesPlayed ? parseInt(data.minutesPlayed, 10) : undefined,
+          isStarter: data.isStarter,
+        },
       });
       reset();
       onOpenChange(false);
@@ -112,7 +119,7 @@ export function MatchPlayerEditDialog({
                 id="goals"
                 type="number"
                 min="0"
-                {...register("goals", { valueAsNumber: true })}
+                {...register("goals")}
                 disabled={isLoading}
               />
               {errors.goals && (
@@ -126,7 +133,7 @@ export function MatchPlayerEditDialog({
                 id="assists"
                 type="number"
                 min="0"
-                {...register("assists", { valueAsNumber: true })}
+                {...register("assists")}
                 disabled={isLoading}
               />
               {errors.assists && (
@@ -142,7 +149,7 @@ export function MatchPlayerEditDialog({
                 id="yellowCards"
                 type="number"
                 min="0"
-                {...register("yellowCards", { valueAsNumber: true })}
+                {...register("yellowCards")}
                 disabled={isLoading}
               />
               {errors.yellowCards && (
@@ -157,7 +164,7 @@ export function MatchPlayerEditDialog({
                 type="number"
                 min="0"
                 max="1"
-                {...register("redCards", { valueAsNumber: true })}
+                {...register("redCards")}
                 disabled={isLoading}
               />
               {errors.redCards && (
@@ -173,7 +180,7 @@ export function MatchPlayerEditDialog({
               type="number"
               min="0"
               max="120"
-              {...register("minutesPlayed", { valueAsNumber: true })}
+              {...register("minutesPlayed")}
               disabled={isLoading}
             />
             {errors.minutesPlayed && (

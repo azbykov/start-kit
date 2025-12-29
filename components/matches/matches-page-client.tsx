@@ -24,7 +24,7 @@ export function MatchesPageClient({ isAdmin }: MatchesPageClientProps) {
     return () => setTitle(undefined);
   }, [setTitle]);
 
-  const [page, setPage] = useState(1);
+  const [page, _setPage] = useState(1);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [editMatch, setEditMatch] = useState<Match | null>(null);
   const [deleteMatch, setDeleteMatch] = useState<Match | null>(null);
@@ -204,6 +204,8 @@ export function MatchesPageClient({ isAdmin }: MatchesPageClientProps) {
     </div>
   );
 }
+
+
 
 
 

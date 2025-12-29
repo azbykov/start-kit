@@ -807,7 +807,7 @@ async function main() {
   console.log(`📊 Creating ${events.length} events for player ${player.firstName} ${player.lastName}...`);
 
   for (const eventData of events) {
-    const event = await prisma.matchEvent.create({
+    await prisma.matchEvent.create({
       data: {
         matchId: match.id,
         playerId: player.id,

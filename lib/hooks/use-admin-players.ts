@@ -61,7 +61,6 @@ export function useUpdatePlayer() {
         queryClient.setQueryData<Player>(playerKeys.detail(id), {
           ...previousPlayer,
           ...data,
-          updatedAt: new Date().toISOString(),
         });
       }
 

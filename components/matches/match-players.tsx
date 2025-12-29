@@ -20,7 +20,7 @@ interface MatchPlayersProps {
 export function MatchPlayers({
   players,
   isAdmin = false,
-  matchId,
+  matchId: _matchId,
   onEditPlayer,
   onDeletePlayer,
   onAddPlayer,

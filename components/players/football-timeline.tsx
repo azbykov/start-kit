@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useEffect, useRef } from "react";
+import { useMemo, useEffect, useRef } from "react";
 import * as d3 from "d3";
 import type { PlayerMatchEvent } from "@/lib/types/players";
 
@@ -182,7 +182,7 @@ export function FootballTimeline({
       });
 
       // Calculate y offsets for overlapping events
-      eventGroups.forEach((group, i) => {
+      eventGroups.forEach((group, _i) => {
         if (group.events.length > 1) {
           group.events.forEach((event, j) => {
             const offset = (j - (group.events.length - 1) / 2) * 20;

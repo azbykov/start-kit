@@ -66,7 +66,7 @@ const getStatusBadge = (status: string) => {
 };
 
 const createColumns = (
-  router: ReturnType<typeof useRouter>,
+  _router: ReturnType<typeof useRouter>,
   onEdit?: (match: Match) => void,
   onDelete?: (match: Match) => void
 ): ColumnDef<Match>[] => [

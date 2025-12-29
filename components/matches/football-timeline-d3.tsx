@@ -163,7 +163,7 @@ function getEventTypeStats(events: TimelineEvent[]): EventTypeStats[] {
 export function FootballTimelineD3({
   events,
   homeTeamId,
-  awayTeamId,
+  awayTeamId: _awayTeamId,
   width = 1200,
   height = 300,
   className = "",
@@ -574,6 +574,8 @@ export function FootballTimelineD3({
     </div>
   );
 }
+
+
 
 
 

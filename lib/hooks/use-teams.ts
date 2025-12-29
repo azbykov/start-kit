@@ -14,9 +14,6 @@ import {
   getTeamMatches,
 } from "@/lib/api/teams";
 import type {
-  Team,
-  TeamProfile,
-  TeamsListResponse,
   PaginationInput,
 } from "@/lib/types/teams";
 

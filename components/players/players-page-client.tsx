@@ -7,8 +7,6 @@ import { PlayerForm } from "./player-form";
 import { DeletePlayerDialog } from "./delete-player-dialog";
 import { Button } from "@/components/ui/button";
 import type { Player } from "@/lib/types/players";
-import { Role } from "@prisma/client";
-import { useSession } from "next-auth/react";
 import { usePageTitle } from "@/components/layout/page-title-context";
 
 interface PlayersPageClientProps {

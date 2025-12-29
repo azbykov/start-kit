@@ -69,10 +69,10 @@ interface AppSidebarProps {
   onToggle?: () => void;
 }
 
-export function AppSidebar({ isOpen, onClose, onToggle }: AppSidebarProps) {
+export function AppSidebar({ isOpen, onClose, onToggle: _onToggle }: AppSidebarProps) {
   const pathname = usePathname();
 
-  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+  const handleLinkClick = (_e: React.MouseEvent<HTMLAnchorElement>) => {
     // Close sidebar only on mobile devices
     if (window.innerWidth < 768 && onClose) {
       onClose();

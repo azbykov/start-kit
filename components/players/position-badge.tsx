@@ -2,7 +2,7 @@
 
 import { Position } from "@prisma/client";
 import { Badge } from "@/components/ui/badge";
-import { positionShorts, positionBadgeClasses } from "@/lib/utils/player";
+import { positionShorts } from "@/lib/utils/player";
 import { cn } from "@/lib/utils";
 
 interface PositionBadgeProps {

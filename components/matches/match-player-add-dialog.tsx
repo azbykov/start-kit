@@ -60,11 +60,11 @@ export function MatchPlayerAddDialog({
     defaultValues: {
       playerId: "",
       teamId: teamId,
-      goals: 0,
-      assists: 0,
-      yellowCards: 0,
-      redCards: 0,
-      minutesPlayed: 0,
+      goals: "0",
+      assists: "0",
+      yellowCards: "0",
+      redCards: "0",
+      minutesPlayed: "0",
       isStarter: false,
     },
   });
@@ -84,11 +84,11 @@ export function MatchPlayerAddDialog({
       reset({
         playerId: "",
         teamId: teamId,
-        goals: 0,
-        assists: 0,
-        yellowCards: 0,
-        redCards: 0,
-        minutesPlayed: 0,
+        goals: "0",
+        assists: "0",
+        yellowCards: "0",
+        redCards: "0",
+        minutesPlayed: "0",
         isStarter: false,
       });
     }
@@ -101,7 +101,7 @@ export function MatchPlayerAddDialog({
   const selectedPlayer = players?.find((p) => p.id === watchedPlayerId);
 
   // Filter out players already in match
-  const availablePlayers = players?.filter((player) => {
+  const availablePlayers = players?.filter((_player) => {
     // TODO: фильтровать игроков, которые уже добавлены в матч
     return true;
   });
@@ -127,7 +127,14 @@ export function MatchPlayerAddDialog({
     try {
       await addMutation.mutateAsync({
         matchId,
-        data,
+        data: {
+          ...data,
+          goals: parseInt(data.goals, 10) || 0,
+          assists: parseInt(data.assists, 10) || 0,
+          yellowCards: parseInt(data.yellowCards, 10) || 0,
+          redCards: parseInt(data.redCards, 10) || 0,
+          minutesPlayed: parseInt(data.minutesPlayed, 10) || 0,
+        },
       });
       reset();
       onOpenChange(false);

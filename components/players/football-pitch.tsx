@@ -51,7 +51,7 @@ export function FootballPitch({
       : undefined;
 
     // Create group for field elements
-    const fieldGroup = svg.append("g").attr("transform", transform);
+    const fieldGroup = svg.append("g").attr("transform", transform || "");
 
     // Field background (green)
     fieldGroup
@@ -229,7 +229,7 @@ export function FootballPitch({
       .attr("stroke-width", 2);
 
     // Create group for events with same transform
-    const eventsGroup = svg.append("g").attr("transform", transform);
+    const eventsGroup = svg.append("g").attr("transform", transform || "");
     eventsGroup.attr("class", "events-layer");
 
     // Call onRender callback if provided

@@ -19,14 +19,13 @@ export const createPlayerSchema = z.object({
     .max(100, "Фамилия слишком длинная"),
   position: z
     .array(z.nativeEnum(Position, {
-      errorMap: () => ({ message: "Неверная позиция" }),
+      message: "Неверная позиция",
     }))
     .min(1, "Выберите хотя бы одну позицию"),
   dateOfBirth: z
     .union([
       z.date({
-        required_error: "Дата рождения обязательна",
-        invalid_type_error: "Некорректная дата рождения",
+        message: "Некорректная дата рождения",
       }),
       z.string().transform((str) => {
         const date = new Date(str);
@@ -88,14 +87,14 @@ export const updatePlayerSchema = z.object({
     .optional(),
   position: z
     .array(z.nativeEnum(Position, {
-      errorMap: () => ({ message: "Неверная позиция" }),
+      message: "Неверная позиция",
     }))
     .min(1, "Выберите хотя бы одну позицию")
     .optional(),
   dateOfBirth: z
     .union([
       z.date({
-        invalid_type_error: "Некорректная дата рождения",
+        message: "Некорректная дата рождения",
       }),
       z.string().transform((str) => {
         const date = new Date(str);
@@ -159,7 +158,7 @@ export const updatePlayerFormSchema = z.object({
     .optional(),
   position: z
     .array(z.nativeEnum(Position, {
-      errorMap: () => ({ message: "Неверная позиция" }),
+      message: "Неверная позиция",
     }))
     .min(1, "Выберите хотя бы одну позицию")
     .optional(),
@@ -193,7 +192,7 @@ export const updatePlayerFormSchema = z.object({
     ),
   teamId: z.string().optional(),
   image: z.string().url("Неверный URL изображения").optional().or(z.literal("")),
-  marketValue: z.coerce.number().min(0, "Рыночная стоимость не может быть отрицательной").optional(),
+  marketValue: z.string().optional(),
   contractExpires: z
     .string()
     .optional()
@@ -205,10 +204,10 @@ export const updatePlayerFormSchema = z.object({
       },
       "Некорректная дата окончания контракта"
     ),
-  totalMatches: z.coerce.number().int().min(0).max(1000).optional(),
-  totalGoals: z.coerce.number().int().min(0).max(500).optional(),
-  totalAssists: z.coerce.number().int().min(0).max(500).optional(),
-  totalMinutes: z.coerce.number().int().min(0).max(100000).optional(),
+  totalMatches: z.string().optional(),
+  totalGoals: z.string().optional(),
+  totalAssists: z.string().optional(),
+  totalMinutes: z.string().optional(),
   videoLinks: z
     .array(z.string().url("Неверный URL"))
     .max(15, "Максимум 15 видео-ссылок")
@@ -229,7 +228,7 @@ export const createPlayerFormSchema = z.object({
     .max(100, "Фамилия слишком длинная"),
   position: z
     .array(z.nativeEnum(Position, {
-      errorMap: () => ({ message: "Неверная позиция" }),
+      message: "Неверная позиция",
     }))
     .min(1, "Выберите хотя бы одну позицию"),
   dateOfBirth: z
@@ -258,10 +257,10 @@ export const createPlayerFormSchema = z.object({
       "Неверный возраст игрока"
     ),
   teamId: z.string().optional(),
-  totalMatches: z.coerce.number().int().min(0).max(1000).default(0),
-  totalGoals: z.coerce.number().int().min(0).max(500).default(0),
-  totalAssists: z.coerce.number().int().min(0).max(500).default(0),
-  totalMinutes: z.coerce.number().int().min(0).max(100000).default(0),
+  totalMatches: z.string().default("0"),
+  totalGoals: z.string().default("0"),
+  totalAssists: z.string().default("0"),
+  totalMinutes: z.string().default("0"),
   videoLinks: z
     .array(z.string().url("Неверный URL"))
     .max(15, "Максимум 15 видео-ссылок")

@@ -19,7 +19,7 @@ interface SummaryStatsTableProps {
   };
 }
 
-export function SummaryStatsTable({ statistics }: SummaryStatsTableProps) {
+export function SummaryStatsTable({ statistics: _statistics }: SummaryStatsTableProps) {
   // Mock data for detailed stats - in real app this would come from API
   const passAccuracy = 89; // This should come from actual stats
   const dribbles = 4; // This should come from actual stats
@@ -153,5 +153,6 @@ const StatsRow = ({
     </TableCell>
   </TableRow>
 );
+
 
 

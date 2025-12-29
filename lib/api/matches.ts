@@ -5,7 +5,6 @@
 
 import { api } from "@/lib/api";
 import type {
-  Match,
   MatchProfile,
   MatchesListResponse,
   MatchPlayersResponse,

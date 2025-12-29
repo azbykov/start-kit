@@ -3,15 +3,11 @@
 import type { MatchProfile, MatchPlayersResponse } from "@/lib/types/matches";
 import {
   Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import Image from "next/image";
 import { Calendar, Clock, MapPin, Trophy, Pencil, Timer } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 
 interface MatchProfileProps {
   match: MatchProfile;

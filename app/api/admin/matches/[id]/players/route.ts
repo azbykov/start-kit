@@ -60,13 +60,20 @@ export async function POST(
     const {
       playerId,
       teamId,
-      goals,
-      assists,
-      yellowCards,
-      redCards,
-      minutesPlayed,
+      goals: goalsStr,
+      assists: assistsStr,
+      yellowCards: yellowCardsStr,
+      redCards: redCardsStr,
+      minutesPlayed: minutesPlayedStr,
       isStarter,
     } = validationResult.data;
+
+    // Convert strings to numbers
+    const goals = parseInt(goalsStr, 10) || 0;
+    const assists = parseInt(assistsStr, 10) || 0;
+    const yellowCards = parseInt(yellowCardsStr, 10) || 0;
+    const redCards = parseInt(redCardsStr, 10) || 0;
+    const minutesPlayed = parseInt(minutesPlayedStr, 10) || 0;
 
     // Verify player exists and belongs to one of the match teams
     const player = await prisma.player.findUnique({
@@ -190,6 +197,8 @@ export async function POST(
     );
   }
 }
+
+
 
 
 

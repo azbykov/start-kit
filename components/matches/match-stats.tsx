@@ -2,7 +2,7 @@
 
 import type { MatchPlayersResponse } from "@/lib/types/matches";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 interface MatchStatsProps {
   players: MatchPlayersResponse;

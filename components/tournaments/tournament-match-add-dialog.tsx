@@ -54,7 +54,7 @@ export function TournamentMatchAddDialog({
 }: TournamentMatchAddDialogProps) {
   const createMutation = useCreateMatch();
 
-  const form = useForm<CreateMatchFormInput>({
+  const form = useForm({
     resolver: zodResolver(createMatchFormSchema),
     defaultValues: {
       date: "",

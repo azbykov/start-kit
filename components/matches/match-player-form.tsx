@@ -69,21 +69,21 @@ export function MatchPlayerForm({
         ? {
             playerId: player.playerId,
             teamId: player.teamId,
-            goals: player.goals,
-            assists: player.assists,
-            yellowCards: player.yellowCards,
-            redCards: player.redCards,
-            minutesPlayed: player.minutesPlayed,
+            goals: player.goals?.toString() || "",
+            assists: player.assists?.toString() || "",
+            yellowCards: player.yellowCards?.toString() || "",
+            redCards: player.redCards?.toString() || "",
+            minutesPlayed: player.minutesPlayed?.toString() || "",
             isStarter: player.isStarter,
           }
         : {
             playerId: "",
             teamId: teamId,
-            goals: 0,
-            assists: 0,
-            yellowCards: 0,
-            redCards: 0,
-            minutesPlayed: 0,
+            goals: "0",
+            assists: "0",
+            yellowCards: "0",
+            redCards: "0",
+            minutesPlayed: "0",
             isStarter: false,
           },
   });
@@ -102,22 +102,22 @@ export function MatchPlayerForm({
       reset({
         playerId: player.playerId,
         teamId: player.teamId,
-        goals: player.goals,
-        assists: player.assists,
-        yellowCards: player.yellowCards,
-        redCards: player.redCards,
-        minutesPlayed: player.minutesPlayed,
+        goals: player.goals?.toString() || "",
+        assists: player.assists?.toString() || "",
+        yellowCards: player.yellowCards?.toString() || "",
+        redCards: player.redCards?.toString() || "",
+        minutesPlayed: player.minutesPlayed?.toString() || "",
         isStarter: player.isStarter,
       });
     } else {
       reset({
         playerId: "",
         teamId: teamId,
-        goals: 0,
-        assists: 0,
-        yellowCards: 0,
-        redCards: 0,
-        minutesPlayed: 0,
+        goals: "0",
+        assists: "0",
+        yellowCards: "0",
+        redCards: "0",
+        minutesPlayed: "0",
         isStarter: false,
       });
     }
@@ -134,11 +134,11 @@ export function MatchPlayerForm({
           matchId,
           playerId: player.playerId,
           data: {
-            goals: data.goals,
-            assists: data.assists,
-            yellowCards: data.yellowCards,
-            redCards: data.redCards,
-            minutesPlayed: data.minutesPlayed,
+            goals: data.goals ? parseInt(data.goals, 10) : undefined,
+            assists: data.assists ? parseInt(data.assists, 10) : undefined,
+            yellowCards: data.yellowCards ? parseInt(data.yellowCards, 10) : undefined,
+            redCards: data.redCards ? parseInt(data.redCards, 10) : undefined,
+            minutesPlayed: data.minutesPlayed ? parseInt(data.minutesPlayed, 10) : undefined,
             isStarter: data.isStarter,
           },
         });
@@ -146,13 +146,13 @@ export function MatchPlayerForm({
         await addMutation.mutateAsync({
           matchId,
           data: {
-            playerId: data.playerId!,
-            teamId: data.teamId!,
-            goals: data.goals || 0,
-            assists: data.assists || 0,
-            yellowCards: data.yellowCards || 0,
-            redCards: data.redCards || 0,
-            minutesPlayed: data.minutesPlayed || 0,
+            playerId: "playerId" in data ? data.playerId! : "",
+            teamId: "teamId" in data ? data.teamId! : "",
+            goals: data.goals ? parseInt(data.goals, 10) : 0,
+            assists: data.assists ? parseInt(data.assists, 10) : 0,
+            yellowCards: data.yellowCards ? parseInt(data.yellowCards, 10) : 0,
+            redCards: data.redCards ? parseInt(data.redCards, 10) : 0,
+            minutesPlayed: data.minutesPlayed ? parseInt(data.minutesPlayed, 10) : 0,
             isStarter: data.isStarter || false,
           },
         });
@@ -205,7 +205,7 @@ export function MatchPlayerForm({
                   ))}
                 </SelectContent>
               </Select>
-              {errors.playerId && (
+              {"playerId" in errors && errors.playerId && (
                 <p className="text-sm text-destructive">
                   {errors.playerId.message as string}
                 </p>
@@ -220,7 +220,7 @@ export function MatchPlayerForm({
                 id="goals"
                 type="number"
                 min="0"
-                {...register("goals", { valueAsNumber: true })}
+                {...register("goals")}
                 disabled={isLoading}
               />
               {errors.goals && (
@@ -236,7 +236,7 @@ export function MatchPlayerForm({
                 id="assists"
                 type="number"
                 min="0"
-                {...register("assists", { valueAsNumber: true })}
+                {...register("assists")}
                 disabled={isLoading}
               />
               {errors.assists && (
@@ -254,7 +254,7 @@ export function MatchPlayerForm({
                 id="yellowCards"
                 type="number"
                 min="0"
-                {...register("yellowCards", { valueAsNumber: true })}
+                {...register("yellowCards")}
                 disabled={isLoading}
               />
               {errors.yellowCards && (
@@ -271,7 +271,7 @@ export function MatchPlayerForm({
                 type="number"
                 min="0"
                 max="1"
-                {...register("redCards", { valueAsNumber: true })}
+                {...register("redCards")}
                 disabled={isLoading}
               />
               {errors.redCards && (
@@ -289,7 +289,7 @@ export function MatchPlayerForm({
               type="number"
               min="0"
               max="120"
-              {...register("minutesPlayed", { valueAsNumber: true })}
+              {...register("minutesPlayed")}
               disabled={isLoading}
             />
             {errors.minutesPlayed && (
@@ -351,6 +351,8 @@ export function MatchPlayerForm({
     </Dialog>
   );
 }
+
+
 
 
 

@@ -236,7 +236,7 @@ function adaptPages(
 function adaptImports(
   content: string,
   sourceFile: string,
-  targetFile: string
+  _targetFile: string
 ): string {
   // Replace relative imports with @/ aliases
   const lines = content.split("\n");
