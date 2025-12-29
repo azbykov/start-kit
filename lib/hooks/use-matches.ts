@@ -12,7 +12,6 @@ import {
   getMatchEvents,
 } from "@/lib/api/matches";
 import type {
-  MatchEvent,
   PaginationInput,
 } from "@/lib/types/matches";
 
