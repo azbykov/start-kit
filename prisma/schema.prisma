@@ -96,6 +96,8 @@ model Player {
 
 model Tournament {
   id          String    @id @default(cuid())
+  ffspbTournamentId Int? @unique
+  ffspbTournamentUrl String?
   name        String    @db.VarChar(200)
   description String?
   season      String?   @db.VarChar(50)
@@ -118,6 +120,7 @@ model Tournament {
   teams       TournamentTeam[]
   matches     Match[]
 
+  @@index([ffspbTournamentId])
   @@index([name])
   @@index([season])
   @@index([status])

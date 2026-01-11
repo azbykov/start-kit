@@ -253,4 +253,3 @@ export function sortPlayersByPosition<T extends { position: Position | Position[
     return 0;
   });
 }
-

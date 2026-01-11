@@ -97,4 +97,3 @@ export async function getTeamMatches(teamId: string) {
   }> }>(`/teams/${teamId}/matches`);
   return response.data.matches;
 }
-

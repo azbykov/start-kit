@@ -7,6 +7,7 @@ import path from "node:path";
 type TournamentJson = {
   tournamentId: number;
   tournamentUrl: string;
+  tournamentName?: string | null;
   scrapedAtIso: string;
   teams: TeamJson[];
   errors?: Array<{ url: string; message: string }>;
@@ -132,6 +133,25 @@ async function main() {
     warnings: [],
   };
 
+  const tournamentName =
+    (typeof data.tournamentName === "string" && data.tournamentName.trim()
+      ? normalizeWhitespace(data.tournamentName)
+      : null) ?? `Турнир ФФСПб #${data.tournamentId}`;
+
+  const dbTournament = await prisma.tournament.upsert({
+    where: { ffspbTournamentId: data.tournamentId },
+    create: {
+      ffspbTournamentId: data.tournamentId,
+      ffspbTournamentUrl: data.tournamentUrl,
+      name: tournamentName,
+      description: `Импортировано из ${data.tournamentUrl}`,
+    },
+    update: {
+      ffspbTournamentUrl: data.tournamentUrl,
+      name: tournamentName,
+    },
+  });
+
   for (const team of data.teams) {
     const teamName = team.name ?? `Команда ${team.teamId}`;
 
@@ -151,6 +171,20 @@ async function main() {
     });
 
     result.teamsUpserted++;
+
+    await prisma.tournamentTeam.upsert({
+      where: {
+        tournamentId_teamId: {
+          tournamentId: dbTournament.id,
+          teamId: dbTeam.id,
+        },
+      },
+      create: {
+        tournamentId: dbTournament.id,
+        teamId: dbTeam.id,
+      },
+      update: {},
+    });
 
     for (const player of team.players) {
       if (!player.firstName || !player.lastName) {
@@ -250,6 +284,7 @@ async function main() {
       {
         tournamentId: data.tournamentId,
         tournamentUrl: data.tournamentUrl,
+        tournamentName,
         teamsUpserted: result.teamsUpserted,
         playersUpserted: result.playersUpserted,
         playersWithFetchedDob: result.playersWithFetchedDob,

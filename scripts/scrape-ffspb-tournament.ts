@@ -6,6 +6,7 @@ import path from "node:path";
 type TournamentJson = {
   tournamentId: number;
   tournamentUrl: string;
+  tournamentName: string | null;
   scrapedAtIso: string;
   teams: TeamJson[];
   errors: ScrapeError[];
@@ -50,6 +51,14 @@ function getArgFlag(name: string): boolean {
 
 function normalizeWhitespace(input: string): string {
   return input.replace(/\s+/g, " ").trim();
+}
+
+function parseTournamentName(html: string): string | null {
+  const $ = cheerio.load(html);
+  const h1 = normalizeWhitespace($("h1").first().text());
+  if (h1) return h1;
+  const title = normalizeWhitespace($("title").first().text());
+  return title || null;
 }
 
 function extractTeamIdsFromTournamentHtml(
@@ -193,6 +202,7 @@ async function main() {
   const errors: ScrapeError[] = [];
 
   const tournamentHtml = await fetchHtml(tournamentUrl);
+  const tournamentName = parseTournamentName(tournamentHtml);
   const teamIds = extractTeamIdsFromTournamentHtml(tournamentId, tournamentHtml);
 
   if (teamIds.length === 0) {
@@ -238,6 +248,7 @@ async function main() {
   const result: TournamentJson = {
     tournamentId,
     tournamentUrl,
+    tournamentName,
     scrapedAtIso,
     teams,
     errors,
