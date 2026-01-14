@@ -13,6 +13,7 @@ import { Pencil, Plus, Trash2 } from "lucide-react";
 import { TeamStaffForm } from "@/components/teams/team-staff-form";
 import { useDeleteTeamStaffMember } from "@/lib/hooks/use-admin-teams";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 
 interface TeamStaffProps {
   teamId: string;

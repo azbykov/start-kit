@@ -2,6 +2,15 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import logger from "@/lib/logger";
 
+type TournamentDocumentRow = {
+  id: string;
+  title: string;
+  blobUrl: string;
+  contentType: string | null;
+  size: number | null;
+  createdAt: Date;
+};
+
 /**
  * GET /api/tournaments/[id]/documents
  * Get tournament documents (public - no authentication required)
@@ -25,7 +34,7 @@ export async function GET(
       );
     }
 
-    const documents = await (prisma as any).tournamentDocument.findMany({
+    const documents = (await (prisma as any).tournamentDocument.findMany({
       where: { tournamentId },
       orderBy: { createdAt: "desc" },
       select: {
@@ -36,7 +45,7 @@ export async function GET(
         size: true,
         createdAt: true,
       },
-    });
+    })) as TournamentDocumentRow[];
 
     return NextResponse.json({
       documents: documents.map((d) => ({

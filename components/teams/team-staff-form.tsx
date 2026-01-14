@@ -33,7 +33,7 @@ const staffFormSchema = z.object({
   isActive: z.boolean().default(true),
 });
 
-type StaffFormInput = z.infer<typeof staffFormSchema>;
+type StaffFormInput = z.input<typeof staffFormSchema>;
 
 interface TeamStaffFormProps {
   teamId: string;
@@ -118,7 +118,7 @@ export function TeamStaffForm({
       email: data.email?.trim() ? data.email.trim() : null,
       // Sort order is managed internally (form doesn't expose it for now)
       sortOrder: staff?.sortOrder ?? 0,
-      isActive: data.isActive,
+      isActive: data.isActive ?? true,
     };
 
     const saved = isEditMode && staff
