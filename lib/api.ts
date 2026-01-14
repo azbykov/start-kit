@@ -11,14 +11,25 @@ import axios, { AxiosInstance, AxiosError } from "axios";
 const api: AxiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || "/api",
   timeout: 10000,
-  headers: {
-    "Content-Type": "application/json",
-  },
 });
 
 // Request interceptor
 api.interceptors.request.use(
   (config) => {
+    // Allow browser/axios to set correct Content-Type for FormData (multipart boundary).
+    // If Content-Type is forced to application/json, Next.js request.formData() will fail.
+    if (
+      typeof FormData !== "undefined" &&
+      config.data instanceof FormData &&
+      config.headers
+    ) {
+      // Axios headers can be a plain object or AxiosHeaders.
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const headers: any = config.headers as any;
+      delete headers["Content-Type"];
+      delete headers["content-type"];
+    }
+
     if (process.env.NODE_ENV === "development") {
       console.debug("API request:", config.method, config.url);
     }

@@ -60,6 +60,7 @@ export async function POST(request: NextRequest) {
       dateOfBirth,
       teamId,
       image,
+      rating = 0,
       marketValue,
       contractExpires,
       totalMatches = 0,
@@ -88,6 +89,7 @@ export async function POST(request: NextRequest) {
         dateOfBirth,
         teamId: teamId || null,
         image: image || null,
+        rating,
         marketValue: marketValue ? new Prisma.Decimal(marketValue) : null,
         contractExpires: contractExpires || null,
         totalMatches,
@@ -120,6 +122,7 @@ export async function POST(request: NextRequest) {
         dateOfBirth: player.dateOfBirth.toISOString().split("T")[0], // ISO date only
         teamId: player.teamId,
         image: player.image,
+        rating: player.rating,
         totalMatches: player.totalMatches,
         totalGoals: player.totalGoals,
         totalAssists: player.totalAssists,

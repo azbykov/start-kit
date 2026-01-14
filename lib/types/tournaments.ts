@@ -13,6 +13,7 @@ export type ParticipantGender = "MALE" | "FEMALE" | "MIXED";
 export interface Tournament {
   id: string;
   name: string;
+  shortName: string | null;
   organizer: string | null;
   description: string | null;
   season: string | null;
@@ -38,6 +39,7 @@ export interface Tournament {
 export interface TournamentProfile {
   id: string;
   name: string;
+  shortName: string | null;
   organizer: string | null;
   description: string | null;
   season: string | null;
@@ -86,6 +88,7 @@ export interface TournamentsListResponse {
  */
 export interface CreateTournamentRequest {
   name: string;
+  shortName?: string | null;
   organizer?: string | null;
   description?: string | null;
   season?: string | null;
@@ -108,6 +111,7 @@ export interface CreateTournamentRequest {
  */
 export interface UpdateTournamentRequest {
   name?: string;
+  shortName?: string | null;
   organizer?: string | null;
   description?: string | null;
   season?: string | null;
@@ -139,5 +143,40 @@ export interface DeleteTournamentResponse {
 export interface ApiError {
   error: string; // Russian error message
   fieldErrors?: Record<string, string[]>;
+}
+
+/**
+ * Tournament documents (public)
+ */
+export interface TournamentDocument {
+  id: string;
+  title: string;
+  url: string;
+  contentType: string | null;
+  size: number | null;
+  createdAt: string; // ISO 8601 date-time
+}
+
+/**
+ * Team statistics inside a tournament (public)
+ */
+export interface TournamentTeamStatisticsRow {
+  team: {
+    id: string;
+    name: string;
+    logo: string | null;
+  };
+  played: number;
+  wins: number;
+  draws: number;
+  losses: number;
+  goalsFor: number;
+  goalsAgainst: number;
+  goalDifference: number;
+  points: number;
+  assists: number;
+  yellowCards: number;
+  redCards: number;
+  minutesPlayed: number;
 }
 

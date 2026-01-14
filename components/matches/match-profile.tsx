@@ -117,9 +117,13 @@ export function MatchProfileComponent({
       <div className="gradient-hero p-6 lg:p-8">
         <div className="flex items-center justify-center gap-2 mb-4">
           {match.tournament && (
-            <Badge variant="secondary" className="bg-primary-foreground/20 text-primary-foreground">
+            <Badge
+              variant="secondary"
+              title={match.tournament.name}
+              className="bg-primary-foreground/20 text-primary-foreground max-w-[90vw] truncate"
+            >
               <Trophy className="w-3 h-3 mr-1" />
-              {match.tournament.name}
+              {match.tournament.shortName || match.tournament.name}
             </Badge>
           )}
         </div>

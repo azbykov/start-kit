@@ -11,6 +11,8 @@ import {
   deleteTournament,
   addTeamToTournament,
   removeTeamFromTournament,
+  uploadTournamentDocument,
+  deleteTournamentDocument,
 } from "@/lib/api/admin/tournaments";
 import type {
   Tournament,
@@ -188,6 +190,40 @@ export function useRemoveTeamFromTournament() {
       });
       queryClient.invalidateQueries({
         queryKey: [...tournamentKeys.detail(variables.tournamentId), "standings"],
+      });
+    },
+  });
+}
+
+/**
+ * Hook to upload tournament document
+ */
+export function useUploadTournamentDocument() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (params: { tournamentId: string; title?: string; file: File }) =>
+      uploadTournamentDocument(params),
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: [...tournamentKeys.detail(variables.tournamentId), "documents"],
+      });
+    },
+  });
+}
+
+/**
+ * Hook to delete tournament document
+ */
+export function useDeleteTournamentDocument() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (params: { tournamentId: string; documentId: string }) =>
+      deleteTournamentDocument(params),
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: [...tournamentKeys.detail(variables.tournamentId), "documents"],
       });
     },
   });

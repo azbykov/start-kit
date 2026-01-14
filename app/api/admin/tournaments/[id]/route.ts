@@ -72,6 +72,9 @@ export async function PATCH(
     if (validationResult.data.name !== undefined) {
       updateData.name = validationResult.data.name;
     }
+    if (validationResult.data.shortName !== undefined) {
+      updateData.shortName = validationResult.data.shortName || null;
+    }
     if (validationResult.data.organizer !== undefined) {
       updateData.organizer = validationResult.data.organizer || null;
     }
@@ -146,6 +149,7 @@ export async function PATCH(
     return NextResponse.json({
       id: updatedTournament.id,
       name: updatedTournament.name,
+      shortName: updatedTournament.shortName,
       organizer: updatedTournament.organizer,
       description: updatedTournament.description,
       season: updatedTournament.season,

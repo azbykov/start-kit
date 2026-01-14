@@ -43,6 +43,7 @@ export async function GET(request: NextRequest) {
     const formattedTournaments = tournaments.map((tournament) => ({
       id: tournament.id,
       name: tournament.name,
+      shortName: tournament.shortName,
       organizer: tournament.organizer,
       description: tournament.description,
       season: tournament.season,

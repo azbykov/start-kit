@@ -46,6 +46,7 @@ export async function POST(request: NextRequest) {
 
     const {
       name,
+      shortName,
       organizer,
       description,
       season,
@@ -67,6 +68,7 @@ export async function POST(request: NextRequest) {
     const tournament = await prisma.tournament.create({
       data: {
         name,
+        shortName: shortName || null,
         organizer: organizer || null,
         description: description || null,
         season: season || null,
@@ -101,6 +103,7 @@ export async function POST(request: NextRequest) {
       {
         id: tournament.id,
         name: tournament.name,
+        shortName: tournament.shortName,
         organizer: tournament.organizer,
         description: tournament.description,
         season: tournament.season,

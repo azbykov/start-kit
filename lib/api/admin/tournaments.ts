@@ -10,6 +10,7 @@ import type {
   UpdateTournamentRequest,
   DeleteTournamentResponse,
   ApiError,
+  TournamentDocument,
 } from "@/lib/types/tournaments";
 
 type ApiFieldError = Error & { fieldErrors?: Record<string, string[]> };
@@ -105,6 +106,48 @@ export async function removeTeamFromTournament(
       {
         params: { teamId },
       }
+    );
+    return response.data;
+  } catch (error: any) {
+    throw toApiFieldError(error);
+  }
+}
+
+/**
+ * Upload tournament document (multipart/form-data)
+ */
+export async function uploadTournamentDocument(params: {
+  tournamentId: string;
+  title?: string;
+  file: File;
+}): Promise<TournamentDocument> {
+  try {
+    const formData = new FormData();
+    if (params.title) {
+      formData.append("title", params.title);
+    }
+    formData.append("file", params.file);
+
+    const response = await api.post<TournamentDocument>(
+      `/admin/tournaments/${params.tournamentId}/documents`,
+      formData
+    );
+    return response.data;
+  } catch (error: any) {
+    throw toApiFieldError(error);
+  }
+}
+
+/**
+ * Delete tournament document
+ */
+export async function deleteTournamentDocument(params: {
+  tournamentId: string;
+  documentId: string;
+}): Promise<{ success: boolean; message: string }> {
+  try {
+    const response = await api.delete<{ success: boolean; message: string }>(
+      `/admin/tournaments/${params.tournamentId}/documents/${params.documentId}`
     );
     return response.data;
   } catch (error: any) {

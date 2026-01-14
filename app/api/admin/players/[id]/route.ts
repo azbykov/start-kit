@@ -84,6 +84,9 @@ export async function PATCH(
     if (validationResult.data.image !== undefined) {
       updateData.image = validationResult.data.image || null;
     }
+    if (validationResult.data.rating !== undefined) {
+      updateData.rating = validationResult.data.rating;
+    }
     if (validationResult.data.marketValue !== undefined) {
       updateData.marketValue = validationResult.data.marketValue !== null 
         ? new Prisma.Decimal(validationResult.data.marketValue)
@@ -141,6 +144,7 @@ export async function PATCH(
       dateOfBirth: updatedPlayer.dateOfBirth.toISOString().split("T")[0],
       teamId: updatedPlayer.teamId,
       image: updatedPlayer.image,
+      rating: updatedPlayer.rating,
       totalMatches: updatedPlayer.totalMatches,
       totalGoals: updatedPlayer.totalGoals,
       totalAssists: updatedPlayer.totalAssists,

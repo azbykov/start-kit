@@ -48,6 +48,7 @@ export const createPlayerSchema = z.object({
     ),
   teamId: z.string().optional(),
   image: z.string().url("Неверный URL изображения").optional().or(z.literal("")),
+  rating: z.number().int().min(0).max(100).optional().default(0),
   marketValue: z.number().min(0, "Рыночная стоимость не может быть отрицательной").optional(),
   contractExpires: z
     .union([
@@ -118,6 +119,7 @@ export const updatePlayerSchema = z.object({
     .optional(),
   teamId: z.string().nullable().optional(),
   image: z.string().url("Неверный URL изображения").optional().or(z.literal("")).nullable(),
+  rating: z.number().int().min(0).max(100).optional(),
   marketValue: z.number().min(0, "Рыночная стоимость не может быть отрицательной").optional().nullable(),
   contractExpires: z
     .union([
@@ -192,6 +194,17 @@ export const updatePlayerFormSchema = z.object({
     ),
   teamId: z.string().optional(),
   image: z.string().url("Неверный URL изображения").optional().or(z.literal("")),
+  rating: z
+    .string()
+    .optional()
+    .refine(
+      (v) => {
+        if (!v) return true;
+        const n = Number(v);
+        return Number.isInteger(n) && n >= 0 && n <= 100;
+      },
+      "Рейтинг должен быть числом от 0 до 100"
+    ),
   marketValue: z.string().optional(),
   contractExpires: z
     .string()
@@ -257,6 +270,17 @@ export const createPlayerFormSchema = z.object({
       "Неверный возраст игрока"
     ),
   teamId: z.string().optional(),
+  rating: z
+    .string()
+    .optional()
+    .default("0")
+    .refine(
+      (v) => {
+        const n = Number(v);
+        return Number.isInteger(n) && n >= 0 && n <= 100;
+      },
+      "Рейтинг должен быть числом от 0 до 100"
+    ),
   totalMatches: z.string().default("0"),
   totalGoals: z.string().default("0"),
   totalAssists: z.string().default("0"),

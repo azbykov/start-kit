@@ -36,6 +36,12 @@ export async function GET(
       coach: team.coach,
       city: team.city,
       country: team.country,
+      contactPhone: team.contactPhone,
+      contactEmail: team.contactEmail,
+      contactWebsite: team.contactWebsite,
+      contactAddress: team.contactAddress,
+      contactTelegram: team.contactTelegram,
+      contactVk: team.contactVk,
       isActive: team.isActive,
       playersCount: team._count.players,
     });

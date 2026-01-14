@@ -375,7 +375,9 @@ export function MatchForm({
                 <SelectItem value="none">Без турнира</SelectItem>
                 {tournaments.map((tournament) => (
                   <SelectItem key={tournament.id} value={tournament.id}>
-                    {tournament.name}
+                      <span title={tournament.name}>
+                        {tournament.shortName || tournament.name}
+                      </span>
                   </SelectItem>
                 ))}
               </SelectContent>

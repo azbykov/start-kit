@@ -68,6 +68,7 @@ export function PlayerForm({
           dateOfBirth: player.dateOfBirth || "",
           teamId: player.teamId || "",
           image: player.image || "",
+          rating: (player.rating ?? 0).toString(),
           totalMatches: player.totalMatches?.toString() || "0",
           totalGoals: player.totalGoals?.toString() || "0",
           totalAssists: player.totalAssists?.toString() || "0",
@@ -77,6 +78,7 @@ export function PlayerForm({
       : {
           position: [Position.CF],
           teamId: initialTeamId || "",
+          rating: "0",
           totalMatches: "0",
           totalGoals: "0",
           totalAssists: "0",
@@ -104,6 +106,7 @@ export function PlayerForm({
         dateOfBirth: player.dateOfBirth || "",
         teamId: player.teamId || "",
         image: player.image || "",
+        rating: (player.rating ?? 0).toString(),
         totalMatches: player.totalMatches?.toString() || "0",
         totalGoals: player.totalGoals?.toString() || "0",
         totalAssists: player.totalAssists?.toString() || "0",
@@ -114,6 +117,7 @@ export function PlayerForm({
       reset({
         position: [Position.CF],
         teamId: initialTeamId || "",
+        rating: "0",
         totalMatches: "0",
         totalGoals: "0",
         totalAssists: "0",
@@ -149,6 +153,7 @@ export function PlayerForm({
       const apiData: any = {
         ...data,
         videoLinks: filteredVideoLinks,
+        rating: "rating" in data && data.rating ? parseInt(data.rating as any, 10) || 0 : 0,
         totalMatches: typeof data.totalMatches === "string" ? parseInt(data.totalMatches, 10) || 0 : data.totalMatches || 0,
         totalGoals: typeof data.totalGoals === "string" ? parseInt(data.totalGoals, 10) || 0 : data.totalGoals || 0,
         totalAssists: typeof data.totalAssists === "string" ? parseInt(data.totalAssists, 10) || 0 : data.totalAssists || 0,
@@ -347,6 +352,26 @@ export function PlayerForm({
                 </p>
               )}
             </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="rating">Рейтинг (0–100)</Label>
+            <Input
+              id="rating"
+              type="number"
+              min="0"
+              max="100"
+              {...register("rating")}
+              disabled={isLoading}
+            />
+            {"rating" in errors && errors.rating && (
+              <p className="text-sm text-destructive">
+                {errors.rating.message as string}
+              </p>
+            )}
+            <p className="text-xs text-muted-foreground">
+              Используется для поиска и ранжирования игроков.
+            </p>
           </div>
 
           <div className="grid grid-cols-4 gap-4">

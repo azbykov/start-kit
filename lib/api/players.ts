@@ -5,23 +5,51 @@
 
 import { api } from "@/lib/api";
 import type {
-  PaginationInput,
+  PlayersListQuery,
   PlayersListResponse,
   PlayerProfile,
   PlayerMatchesResponse,
   PlayerEventsResponse,
   PlayerMatchStatsResponse,
+  PlayersRankingQuery,
+  PlayersRankingResponse,
 } from "@/lib/types/players";
 
 /**
  * Get paginated list of players (public)
  */
 export async function getPlayersList(
-  params: PaginationInput
+  params: PlayersListQuery
 ): Promise<PlayersListResponse> {
-  const { page, pageSize } = params;
+  const {
+    page,
+    pageSize,
+    q,
+    teamId,
+    tournamentId,
+    positions,
+    dateOfBirthFrom,
+    dateOfBirthTo,
+    ratingFrom,
+    ratingTo,
+    sort,
+  } = params;
+
+  const positionsParam = positions && positions.length > 0 ? positions.join(",") : undefined;
   const response = await api.get<PlayersListResponse>("/players", {
-    params: { page, pageSize },
+    params: {
+      page,
+      pageSize,
+      q,
+      teamId,
+      tournamentId,
+      positions: positionsParam,
+      dateOfBirthFrom,
+      dateOfBirthTo,
+      ratingFrom,
+      ratingTo,
+      sort,
+    },
   });
   return response.data;
 }
@@ -68,6 +96,18 @@ export async function getPlayerMatchStats(
   const response = await api.get<PlayerMatchStatsResponse>(
     `/players/${playerId}/matches/${matchId}/stats`
   );
+  return response.data;
+}
+
+/**
+ * Get players rankings by rating with scopes
+ */
+export async function getPlayersRanking(
+  params: PlayersRankingQuery
+): Promise<PlayersRankingResponse> {
+  const response = await api.get<PlayersRankingResponse>("/players/rankings", {
+    params,
+  });
   return response.data;
 }
 

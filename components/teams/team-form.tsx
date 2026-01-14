@@ -55,6 +55,12 @@ export function TeamForm({
             coach: team.coach || "",
             city: team.city || "",
             country: team.country || "",
+            contactPhone: team.contactPhone || "",
+            contactEmail: team.contactEmail || "",
+            contactWebsite: team.contactWebsite || "",
+            contactAddress: team.contactAddress || "",
+            contactTelegram: team.contactTelegram || "",
+            contactVk: team.contactVk || "",
             isActive: team.isActive,
           }
         : {
@@ -63,6 +69,12 @@ export function TeamForm({
             coach: "",
             city: "",
             country: "",
+            contactPhone: "",
+            contactEmail: "",
+            contactWebsite: "",
+            contactAddress: "",
+            contactTelegram: "",
+            contactVk: "",
             isActive: true,
           },
   });
@@ -85,6 +97,12 @@ export function TeamForm({
         coach: team.coach || "",
         city: team.city || "",
         country: team.country || "",
+        contactPhone: team.contactPhone || "",
+        contactEmail: team.contactEmail || "",
+        contactWebsite: team.contactWebsite || "",
+        contactAddress: team.contactAddress || "",
+        contactTelegram: team.contactTelegram || "",
+        contactVk: team.contactVk || "",
         isActive: team.isActive,
       });
     } else {
@@ -94,6 +112,12 @@ export function TeamForm({
         coach: "",
         city: "",
         country: "",
+        contactPhone: "",
+        contactEmail: "",
+        contactWebsite: "",
+        contactAddress: "",
+        contactTelegram: "",
+        contactVk: "",
         isActive: true,
       });
     }
@@ -114,6 +138,12 @@ export function TeamForm({
             coach: data.coach || null,
             city: data.city || null,
             country: data.country || null,
+            contactPhone: data.contactPhone || null,
+            contactEmail: data.contactEmail || null,
+            contactWebsite: data.contactWebsite || null,
+            contactAddress: data.contactAddress || null,
+            contactTelegram: data.contactTelegram || null,
+            contactVk: data.contactVk || null,
             isActive: data.isActive,
           },
         });
@@ -124,6 +154,12 @@ export function TeamForm({
           coach: data.coach || null,
           city: data.city || null,
           country: data.country || null,
+          contactPhone: data.contactPhone || null,
+          contactEmail: data.contactEmail || null,
+          contactWebsite: data.contactWebsite || null,
+          contactAddress: data.contactAddress || null,
+          contactTelegram: data.contactTelegram || null,
+          contactVk: data.contactVk || null,
           isActive: data.isActive ?? true,
         });
       }
@@ -222,7 +258,7 @@ export function TeamForm({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="coach">Тренер</Label>
+            <Label htmlFor="coach">Главный тренер</Label>
             <Input
               id="coach"
               type="text"
@@ -230,11 +266,115 @@ export function TeamForm({
               placeholder="Иванов Иван Иванович"
               disabled={isLoading}
             />
+            <p className="text-xs text-muted-foreground">
+              Будет автоматически добавлен в «Тренерский штаб» как «Главный тренер».
+            </p>
             {errors.coach && (
               <p className="text-sm text-destructive">
                 {errors.coach.message as string}
               </p>
             )}
+          </div>
+
+          <div className="pt-2">
+            <div className="text-sm font-semibold mb-2">Контакты</div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="contactPhone">Телефон</Label>
+                <Input
+                  id="contactPhone"
+                  type="text"
+                  {...register("contactPhone")}
+                  placeholder="+7 999 123-45-67"
+                  disabled={isLoading}
+                />
+                {"contactPhone" in errors && errors.contactPhone && (
+                  <p className="text-sm text-destructive">
+                    {errors.contactPhone.message as string}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="contactEmail">Email</Label>
+                <Input
+                  id="contactEmail"
+                  type="email"
+                  {...register("contactEmail")}
+                  placeholder="club@example.com"
+                  disabled={isLoading}
+                />
+                {"contactEmail" in errors && errors.contactEmail && (
+                  <p className="text-sm text-destructive">
+                    {errors.contactEmail.message as string}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="contactWebsite">Сайт</Label>
+                <Input
+                  id="contactWebsite"
+                  type="url"
+                  {...register("contactWebsite")}
+                  placeholder="https://example.com"
+                  disabled={isLoading}
+                />
+                {"contactWebsite" in errors && errors.contactWebsite && (
+                  <p className="text-sm text-destructive">
+                    {errors.contactWebsite.message as string}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="contactTelegram">Telegram</Label>
+                <Input
+                  id="contactTelegram"
+                  type="text"
+                  {...register("contactTelegram")}
+                  placeholder="@start_fc"
+                  disabled={isLoading}
+                />
+                {"contactTelegram" in errors && errors.contactTelegram && (
+                  <p className="text-sm text-destructive">
+                    {errors.contactTelegram.message as string}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="contactVk">VK</Label>
+                <Input
+                  id="contactVk"
+                  type="text"
+                  {...register("contactVk")}
+                  placeholder="https://vk.com/..."
+                  disabled={isLoading}
+                />
+                {"contactVk" in errors && errors.contactVk && (
+                  <p className="text-sm text-destructive">
+                    {errors.contactVk.message as string}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2 sm:col-span-2">
+                <Label htmlFor="contactAddress">Адрес</Label>
+                <Input
+                  id="contactAddress"
+                  type="text"
+                  {...register("contactAddress")}
+                  placeholder="Санкт-Петербург, ..."
+                  disabled={isLoading}
+                />
+                {"contactAddress" in errors && errors.contactAddress && (
+                  <p className="text-sm text-destructive">
+                    {errors.contactAddress.message as string}
+                  </p>
+                )}
+              </div>
+            </div>
           </div>
 
           <div className="flex items-center space-x-2">

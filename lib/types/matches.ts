@@ -27,6 +27,7 @@ export interface Match {
   awayScore: number | null;
   tournamentId: string | null;
   tournamentName: string | null;
+  tournamentShortName?: string | null;
   // Extended match metadata
   roundId?: number | null;
   gameweek?: number | null;
@@ -70,6 +71,7 @@ export interface MatchProfile {
   tournament: {
     id: string;
     name: string;
+    shortName: string | null;
     logo: string | null;
   } | null;
   // Extended fields
