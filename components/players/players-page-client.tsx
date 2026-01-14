@@ -8,6 +8,11 @@ import { DeletePlayerDialog } from "./delete-player-dialog";
 import { Button } from "@/components/ui/button";
 import type { Player } from "@/lib/types/players";
 import { usePageTitle } from "@/components/layout/page-title-context";
+import {
+  PlayersFilters,
+  type PlayersFiltersValue,
+} from "@/components/players/players-filters";
+import Link from "next/link";
 
 interface PlayersPageClientProps {
   isAdmin: boolean;
@@ -27,7 +32,31 @@ export function PlayersPageClient({ isAdmin }: PlayersPageClientProps) {
   const [deletePlayer, setDeletePlayer] = useState<Player | null>(null);
   const pageSize = 25;
 
-  const { data, isLoading, error, refetch } = usePlayersList({ page, pageSize });
+  const [filters, setFilters] = useState<PlayersFiltersValue>({
+    q: "",
+    teamId: "",
+    tournamentId: "",
+    positions: [],
+    dateOfBirthFrom: "",
+    dateOfBirthTo: "",
+    ratingFrom: "",
+    ratingTo: "",
+    sort: "newest",
+  });
+
+  const { data, isLoading, error, refetch } = usePlayersList({
+    page,
+    pageSize,
+    q: filters.q || undefined,
+    teamId: filters.teamId || undefined,
+    tournamentId: filters.tournamentId || undefined,
+    positions: filters.positions.length > 0 ? filters.positions : undefined,
+    dateOfBirthFrom: filters.dateOfBirthFrom || undefined,
+    dateOfBirthTo: filters.dateOfBirthTo || undefined,
+    ratingFrom: filters.ratingFrom ? Number(filters.ratingFrom) : undefined,
+    ratingTo: filters.ratingTo ? Number(filters.ratingTo) : undefined,
+    sort: filters.sort,
+  });
 
   if (error) {
     return (
@@ -54,13 +83,40 @@ export function PlayersPageClient({ isAdmin }: PlayersPageClientProps) {
       {/* Content */}
       <div className="flex-1 bg-background">
         <div className="container mx-auto px-4 py-8">
-          {isAdmin && (
-            <div className="mb-6 flex justify-end">
+          <div className="mb-6 flex items-center justify-between gap-3 flex-wrap">
+            <Button asChild variant="outline">
+              <Link href="/players/rankings">Рейтинг игроков</Link>
+            </Button>
+            {isAdmin && (
               <Button onClick={() => setCreateDialogOpen(true)}>
                 Создать игрока
               </Button>
-            </div>
-          )}
+            )}
+          </div>
+
+          <div className="mb-6">
+            <PlayersFilters
+              value={filters}
+              onChange={(next) => {
+                setFilters(next);
+                setPage(1);
+              }}
+              onReset={() => {
+                setFilters({
+                  q: "",
+                  teamId: "",
+                  tournamentId: "",
+                  positions: [],
+                  dateOfBirthFrom: "",
+                  dateOfBirthTo: "",
+                  ratingFrom: "",
+                  ratingTo: "",
+                  sort: "newest",
+                });
+                setPage(1);
+              }}
+            />
+          </div>
           <div className="flex-1 overflow-auto">
             <PlayersTable
               data={data?.players || []}

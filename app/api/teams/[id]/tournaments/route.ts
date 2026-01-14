@@ -33,6 +33,7 @@ export async function GET(
           select: {
             id: true,
             name: true,
+            shortName: true,
             logo: true,
             season: true,
             location: true,
@@ -52,6 +53,7 @@ export async function GET(
     const tournaments = tournamentTeams.map((tt) => ({
       id: tt.tournament.id,
       name: tt.tournament.name,
+      shortName: tt.tournament.shortName,
       logo: tt.tournament.logo,
       season: tt.tournament.season,
       location: tt.tournament.location,

@@ -7,13 +7,15 @@
 import { useQuery } from "@tanstack/react-query";
 import {
   getPlayersList,
+  getPlayersRanking,
   getPlayerProfile,
   getPlayerMatches,
   getPlayerEvents,
   getPlayerMatchStats,
 } from "@/lib/api/players";
 import type {
-  PaginationInput,
+  PlayersListQuery,
+  PlayersRankingQuery,
 } from "@/lib/types/players";
 
 /**
@@ -22,7 +24,7 @@ import type {
 export const playerKeys = {
   all: ["players"] as const,
   lists: () => [...playerKeys.all, "list"] as const,
-  list: (params: PaginationInput) =>
+  list: (params: PlayersListQuery) =>
     [...playerKeys.lists(), params] as const,
   details: () => [...playerKeys.all, "detail"] as const,
   detail: (id: string) => [...playerKeys.details(), id] as const,
@@ -35,7 +37,7 @@ export const playerKeys = {
 /**
  * Hook to fetch paginated list of players (public)
  */
-export function usePlayersList(params: PaginationInput) {
+export function usePlayersList(params: PlayersListQuery) {
   return useQuery({
     queryKey: playerKeys.list(params),
     queryFn: () => getPlayersList(params),
@@ -89,5 +91,26 @@ export function usePlayerMatchStats(
   });
 }
 
+/**
+ * Hook to fetch rankings by rating
+ */
+export function usePlayersRanking(params: PlayersRankingQuery) {
+  const enabled =
+    params.scope === "all" ||
+    (params.scope === "tournament" && !!params.tournamentId) ||
+    (params.scope === "team" && !!params.teamId) ||
+    (params.scope === "position" && !!params.position) ||
+    (params.scope === "age" &&
+      (params.ageFrom !== undefined ||
+        params.ageTo !== undefined ||
+        params.birthYearFrom !== undefined ||
+        params.birthYearTo !== undefined));
+
+  return useQuery({
+    queryKey: [...playerKeys.all, "rankings", params],
+    queryFn: () => getPlayersRanking(params),
+    enabled,
+  });
+}
 
 

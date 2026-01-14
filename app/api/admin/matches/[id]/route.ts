@@ -150,6 +150,7 @@ export async function PATCH(
           select: {
             id: true,
             name: true,
+            shortName: true,
           },
         },
       },
@@ -185,6 +186,7 @@ export async function PATCH(
       awayScore: updatedMatch.awayScore,
       tournamentId: updatedMatch.tournamentId,
       tournamentName: updatedMatch.tournament?.name || null,
+      tournamentShortName: updatedMatch.tournament?.shortName || null,
       createdAt: updatedMatch.createdAt.toISOString(),
       updatedAt: updatedMatch.updatedAt.toISOString(),
     });

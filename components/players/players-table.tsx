@@ -101,6 +101,14 @@ const createColumns = (
     },
   },
   {
+    accessorKey: "rating",
+    header: "Рейтинг",
+    cell: ({ row }) => {
+      const rating = row.getValue("rating") as number;
+      return <div className="text-xs font-semibold">{rating}</div>;
+    },
+  },
+  {
     accessorKey: "totalMatches",
     header: "Матчи",
     cell: ({ row }) => {

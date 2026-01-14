@@ -41,6 +41,22 @@ export const createTeamSchema = z.object({
     .max(100, "Название страны слишком длинное")
     .optional()
     .nullable(),
+  contactPhone: z.string().max(50, "Телефон слишком длинный").optional().nullable(),
+  contactEmail: z.string().email("Неверный email").max(200, "Email слишком длинный").optional().nullable(),
+  contactWebsite: z
+    .string()
+    .url("Неверный URL сайта")
+    .max(300, "URL слишком длинный")
+    .optional()
+    .nullable()
+    .or(z.literal("")),
+  contactAddress: z.string().max(300, "Адрес слишком длинный").optional().nullable(),
+  contactTelegram: z.string().max(100, "Telegram слишком длинный").optional().nullable(),
+  contactVk: z
+    .string()
+    .max(200, "Ссылка VK слишком длинная")
+    .optional()
+    .nullable(),
   isActive: z.boolean().default(true),
 });
 
@@ -74,6 +90,22 @@ export const updateTeamSchema = z.object({
     .max(100, "Название страны слишком длинное")
     .optional()
     .nullable(),
+  contactPhone: z.string().max(50, "Телефон слишком длинный").optional().nullable(),
+  contactEmail: z.string().email("Неверный email").max(200, "Email слишком длинный").optional().nullable(),
+  contactWebsite: z
+    .string()
+    .url("Неверный URL сайта")
+    .max(300, "URL слишком длинный")
+    .optional()
+    .nullable()
+    .or(z.literal("")),
+  contactAddress: z.string().max(300, "Адрес слишком длинный").optional().nullable(),
+  contactTelegram: z.string().max(100, "Telegram слишком длинный").optional().nullable(),
+  contactVk: z
+    .string()
+    .max(200, "Ссылка VK слишком длинная")
+    .optional()
+    .nullable(),
   isActive: z.boolean().optional(),
 });
 
@@ -89,6 +121,12 @@ export const createTeamFormSchema = z.object({
   coach: z.string().max(200, "Имя тренера слишком длинное").optional(),
   city: z.string().max(100, "Название города слишком длинное").optional(),
   country: z.string().max(100, "Название страны слишком длинное").optional(),
+  contactPhone: z.string().max(50, "Телефон слишком длинный").optional(),
+  contactEmail: z.string().email("Неверный email").max(200, "Email слишком длинный").optional().or(z.literal("")),
+  contactWebsite: z.string().url("Неверный URL сайта").max(300, "URL слишком длинный").optional().or(z.literal("")),
+  contactAddress: z.string().max(300, "Адрес слишком длинный").optional(),
+  contactTelegram: z.string().max(100, "Telegram слишком длинный").optional(),
+  contactVk: z.string().max(200, "Ссылка VK слишком длинная").optional(),
   isActive: z.boolean().default(true),
 });
 

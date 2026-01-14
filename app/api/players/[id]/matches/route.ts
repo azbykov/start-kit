@@ -49,6 +49,7 @@ export async function GET(
               select: {
                 id: true,
                 name: true,
+                shortName: true,
                 logo: true,
               },
             },
@@ -93,6 +94,7 @@ export async function GET(
           ? {
               id: mp.match.tournament.id,
               name: mp.match.tournament.name,
+              shortName: mp.match.tournament.shortName,
               logo: mp.match.tournament.logo,
             }
           : null,

@@ -17,6 +17,7 @@ export interface Player {
   teamId: string | null;
   teamName: string | null; // Team name for display
   image: string | null;
+  rating: number;
   marketValue: number | null;
   contractExpires: string | null; // ISO 8601 date
   totalMatches: number;
@@ -42,6 +43,7 @@ export interface PlayerProfile {
     logo: string | null;
   } | null;
   image: string | null;
+  rating: number;
   statistics: {
     totalMatches: number;
     totalGoals: number;
@@ -70,11 +72,72 @@ export interface PaginationInput {
 }
 
 /**
+ * Query params for players list (search & ranking)
+ */
+export interface PlayersListQuery extends PaginationInput {
+  q?: string;
+  teamId?: string;
+  tournamentId?: string;
+  positions?: Position[];
+  dateOfBirthFrom?: string; // ISO date
+  dateOfBirthTo?: string; // ISO date
+  ratingFrom?: number;
+  ratingTo?: number;
+  sort?: "newest" | "name" | "rating_desc" | "rating_asc";
+}
+
+/**
  * Response from GET /api/players (public list)
  */
 export interface PlayersListResponse {
   players: Player[];
   pagination: Pagination;
+}
+
+/**
+ * Ranking API types
+ */
+export type PlayersRankingScope =
+  | "all"
+  | "tournament"
+  | "team"
+  | "position"
+  | "age";
+
+export interface PlayerRankingRow {
+  id: string;
+  firstName: string;
+  lastName: string;
+  position: Position[];
+  dateOfBirth: string; // ISO date
+  teamId: string | null;
+  teamName: string | null;
+  image: string | null;
+  rating: number;
+  totalMatches: number;
+  totalGoals: number;
+  totalAssists: number;
+  totalMinutes: number;
+}
+
+export interface PlayersRankingQuery {
+  scope: PlayersRankingScope;
+  limit?: number;
+  tournamentId?: string;
+  teamId?: string;
+  position?: Position;
+  ageFrom?: number;
+  ageTo?: number;
+  birthYearFrom?: number;
+  birthYearTo?: number;
+  ratingFrom?: number;
+  ratingTo?: number;
+}
+
+export interface PlayersRankingResponse {
+  scope: PlayersRankingScope;
+  limit: number;
+  players: PlayerRankingRow[];
 }
 
 /**
@@ -87,6 +150,7 @@ export interface CreatePlayerRequest {
   dateOfBirth: string; // ISO 8601 date string
   teamId?: string | null;
   image?: string | null;
+  rating?: number;
   marketValue?: number | null;
   contractExpires?: string | null; // ISO 8601 date string
   totalMatches?: number;
@@ -106,6 +170,7 @@ export interface UpdatePlayerRequest {
   dateOfBirth?: string; // ISO 8601 date string
   teamId?: string | null;
   image?: string | null;
+  rating?: number;
   marketValue?: number | null;
   contractExpires?: string | null; // ISO 8601 date string
   totalMatches?: number;
@@ -155,6 +220,7 @@ export interface PlayerMatch {
     tournament: {
       id: string;
       name: string;
+      shortName: string | null;
       logo: string | null;
     } | null;
   };
@@ -204,6 +270,7 @@ export interface PlayerEvent {
     tournament: {
       id: string;
       name: string;
+      shortName: string | null;
       logo: string | null;
     } | null;
   };

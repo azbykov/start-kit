@@ -27,6 +27,7 @@ export async function GET(
     return NextResponse.json({
       id: tournament.id,
       name: tournament.name,
+      shortName: tournament.shortName,
       organizer: tournament.organizer,
       description: tournament.description,
       season: tournament.season,

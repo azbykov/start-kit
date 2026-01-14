@@ -319,7 +319,9 @@ export function MatchEditDialog({
                 <SelectItem value="none">Без турнира</SelectItem>
                 {tournamentsData?.tournaments.map((tournament) => (
                   <SelectItem key={tournament.id} value={tournament.id}>
-                    {tournament.name}
+                    <span title={tournament.name}>
+                      {tournament.shortName || tournament.name}
+                    </span>
                   </SelectItem>
                 ))}
               </SelectContent>

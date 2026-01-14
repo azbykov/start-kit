@@ -53,6 +53,11 @@ export const createTournamentSchema = z
       .string()
       .min(1, "Название турнира обязательно")
       .max(200, "Название слишком длинное"),
+    shortName: z
+      .string()
+      .max(60, "Короткое название слишком длинное")
+      .optional()
+      .nullable(),
     organizer: z
       .string()
       .max(200, "Организатор слишком длинный")
@@ -172,6 +177,11 @@ export const updateTournamentSchema = z
       .min(1, "Название турнира обязательно")
       .max(200, "Название слишком длинное")
       .optional(),
+    shortName: z
+      .string()
+      .max(60, "Короткое название слишком длинное")
+      .optional()
+      .nullable(),
     organizer: z
       .string()
       .max(200, "Организатор слишком длинный")
@@ -290,6 +300,7 @@ export const createTournamentFormSchema = z
       .string()
       .min(1, "Название турнира обязательно")
       .max(200, "Название слишком длинное"),
+    shortName: z.string().max(60, "Короткое название слишком длинное").optional(),
     organizer: z.string().max(200, "Организатор слишком длинный").optional(),
     description: z
       .string()

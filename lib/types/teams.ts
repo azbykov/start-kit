@@ -13,6 +13,12 @@ export interface Team {
   coach: string | null;
   city: string | null;
   country: string | null;
+  contactPhone?: string | null;
+  contactEmail?: string | null;
+  contactWebsite?: string | null;
+  contactAddress?: string | null;
+  contactTelegram?: string | null;
+  contactVk?: string | null;
   isActive: boolean;
   createdAt: string; // ISO 8601 date
   updatedAt: string; // ISO 8601 date
@@ -29,6 +35,12 @@ export interface TeamProfile {
   coach: string | null;
   city: string | null;
   country: string | null;
+  contactPhone?: string | null;
+  contactEmail?: string | null;
+  contactWebsite?: string | null;
+  contactAddress?: string | null;
+  contactTelegram?: string | null;
+  contactVk?: string | null;
   isActive: boolean;
   playersCount?: number; // Optional count of players
 }
@@ -68,6 +80,12 @@ export interface CreateTeamRequest {
   coach?: string | null;
   city?: string | null;
   country?: string | null;
+  contactPhone?: string | null;
+  contactEmail?: string | null;
+  contactWebsite?: string | null;
+  contactAddress?: string | null;
+  contactTelegram?: string | null;
+  contactVk?: string | null;
   isActive?: boolean;
 }
 
@@ -80,6 +98,12 @@ export interface UpdateTeamRequest {
   coach?: string | null;
   city?: string | null;
   country?: string | null;
+  contactPhone?: string | null;
+  contactEmail?: string | null;
+  contactWebsite?: string | null;
+  contactAddress?: string | null;
+  contactTelegram?: string | null;
+  contactVk?: string | null;
   isActive?: boolean;
 }
 
@@ -96,5 +120,22 @@ export interface DeleteTeamResponse {
  */
 export interface ApiError {
   error: string; // Russian error message
+}
+
+/**
+ * Team staff member (public)
+ */
+export interface TeamStaffMember {
+  id: string;
+  teamId: string;
+  fullName: string;
+  roleTitle: string;
+  photoUrl?: string | null;
+  phone: string | null;
+  email: string | null;
+  sortOrder: number;
+  isActive: boolean;
+  createdAt: string; // ISO 8601 date-time
+  updatedAt: string; // ISO 8601 date-time
 }
 

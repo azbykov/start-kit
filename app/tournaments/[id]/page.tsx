@@ -1,10 +1,20 @@
 "use client";
 
 import { use, useEffect, useState } from "react";
-import { useTournamentProfile, useTournamentStandings, useTournamentMatches, useTournamentStatistics, useTournamentTeams } from "@/lib/hooks/use-tournaments";
+import {
+  useTournamentProfile,
+  useTournamentStandings,
+  useTournamentMatches,
+  useTournamentStatistics,
+  useTournamentTeams,
+  useTournamentTeamStatistics,
+  useTournamentDocuments,
+} from "@/lib/hooks/use-tournaments";
 import { TournamentProfileComponent } from "@/components/tournaments/tournament-profile";
 import { TournamentStandings } from "@/components/tournaments/tournament-standings";
 import { TournamentStatistics } from "@/components/tournaments/tournament-statistics";
+import { TournamentTeamStatistics } from "@/components/tournaments/tournament-team-statistics";
+import { TournamentDocuments } from "@/components/tournaments/tournament-documents";
 import { TournamentMatchAddDialog } from "@/components/tournaments/tournament-match-add-dialog";
 import { TournamentTeamAddDialog } from "@/components/tournaments/tournament-team-add-dialog";
 import { Button } from "@/components/ui/button";
@@ -28,6 +38,10 @@ export default function TournamentProfilePage({
   const { data: standings, isLoading: standingsLoading } = useTournamentStandings(id);
   const { data: matches, isLoading: matchesLoading } = useTournamentMatches(id);
   const { data: statistics, isLoading: statisticsLoading } = useTournamentStatistics(id);
+  const { data: teamStatistics, isLoading: teamStatisticsLoading } =
+    useTournamentTeamStatistics(id);
+  const { data: documents, isLoading: documentsLoading } =
+    useTournamentDocuments(id);
   const { data: teams } = useTournamentTeams(id);
   const { setTitle, setShowBackButton } = usePageTitle();
   const { data: session } = useSession();
@@ -103,6 +117,13 @@ export default function TournamentProfilePage({
             onAddMatch={() => setAddMatchOpen(true)}
             onAddTeam={() => setAddTeamOpen(true)}
           />
+
+          <TournamentDocuments
+            tournamentId={id}
+            documents={documents || []}
+            isLoading={documentsLoading}
+            isAdmin={isAdmin}
+          />
         
           <TabsContent value="standings" className="mt-0 space-y-4">
             <TournamentStandings
@@ -114,10 +135,16 @@ export default function TournamentProfilePage({
           </TabsContent>
         
           <TabsContent value="statistics" className="mt-0">
+            <div className="space-y-4">
+              <TournamentTeamStatistics
+                teams={teamStatistics || []}
+                isLoading={teamStatisticsLoading}
+              />
             <TournamentStatistics
               statistics={statistics || []}
               isLoading={statisticsLoading}
             />
+            </div>
           </TabsContent>
         </div>
       </Tabs>

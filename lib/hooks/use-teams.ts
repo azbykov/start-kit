@@ -12,6 +12,8 @@ import {
   getTeamPlayers,
   getTeamTournaments,
   getTeamMatches,
+  getTeamStaff,
+  getTeamStatistics,
 } from "@/lib/api/teams";
 import type {
   PaginationInput,
@@ -89,6 +91,28 @@ export function useTeamMatches(teamId: string) {
   return useQuery({
     queryKey: [...teamKeys.detail(teamId), "matches"],
     queryFn: () => getTeamMatches(teamId),
+    enabled: !!teamId,
+  });
+}
+
+/**
+ * Hook to fetch team staff list
+ */
+export function useTeamStaff(teamId: string) {
+  return useQuery({
+    queryKey: [...teamKeys.detail(teamId), "staff"],
+    queryFn: () => getTeamStaff(teamId),
+    enabled: !!teamId,
+  });
+}
+
+/**
+ * Hook to fetch aggregated team statistics across all games
+ */
+export function useTeamStatistics(teamId: string) {
+  return useQuery({
+    queryKey: [...teamKeys.detail(teamId), "statistics"],
+    queryFn: () => getTeamStatistics(teamId),
     enabled: !!teamId,
   });
 }

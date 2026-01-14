@@ -64,6 +64,11 @@ export async function PATCH(
 
     const updateData: any = {};
 
+    const shouldSyncMainCoach = validationResult.data.coach !== undefined;
+    const coachName = validationResult.data.coach?.trim()
+      ? validationResult.data.coach.trim()
+      : null;
+
     if (validationResult.data.name !== undefined) {
       updateData.name = validationResult.data.name;
     }
@@ -71,7 +76,7 @@ export async function PATCH(
       updateData.logo = validationResult.data.logo || null;
     }
     if (validationResult.data.coach !== undefined) {
-      updateData.coach = validationResult.data.coach || null;
+      updateData.coach = coachName;
     }
     if (validationResult.data.city !== undefined) {
       updateData.city = validationResult.data.city || null;
@@ -79,14 +84,68 @@ export async function PATCH(
     if (validationResult.data.country !== undefined) {
       updateData.country = validationResult.data.country || null;
     }
+    if (validationResult.data.contactPhone !== undefined) {
+      updateData.contactPhone = validationResult.data.contactPhone || null;
+    }
+    if (validationResult.data.contactEmail !== undefined) {
+      updateData.contactEmail = validationResult.data.contactEmail || null;
+    }
+    if (validationResult.data.contactWebsite !== undefined) {
+      updateData.contactWebsite = validationResult.data.contactWebsite || null;
+    }
+    if (validationResult.data.contactAddress !== undefined) {
+      updateData.contactAddress = validationResult.data.contactAddress || null;
+    }
+    if (validationResult.data.contactTelegram !== undefined) {
+      updateData.contactTelegram = validationResult.data.contactTelegram || null;
+    }
+    if (validationResult.data.contactVk !== undefined) {
+      updateData.contactVk = validationResult.data.contactVk || null;
+    }
     if (validationResult.data.isActive !== undefined) {
       updateData.isActive = validationResult.data.isActive;
     }
 
-    // Update team (last-write-wins strategy)
-    const updatedTeam = await prisma.team.update({
-      where: { id },
-      data: updateData,
+    // Update team (+ optional sync main coach to staff)
+    const updatedTeam = await prisma.$transaction(async (tx) => {
+      const updated = await tx.team.update({
+        where: { id },
+        data: updateData,
+      });
+
+      if (shouldSyncMainCoach) {
+        const existingMainCoach = await tx.teamStaffMember.findFirst({
+          where: { teamId: id, roleTitle: "Главный тренер" },
+          select: { id: true },
+        });
+
+        if (coachName) {
+          if (existingMainCoach) {
+            await tx.teamStaffMember.update({
+              where: { id: existingMainCoach.id },
+              data: { fullName: coachName, isActive: true },
+            });
+          } else {
+            await tx.teamStaffMember.create({
+              data: {
+                teamId: id,
+                fullName: coachName,
+                roleTitle: "Главный тренер",
+                sortOrder: 0,
+                isActive: true,
+              },
+            });
+          }
+        } else if (existingMainCoach) {
+          // If coach cleared in Team.coach, hide main coach in staff
+          await tx.teamStaffMember.update({
+            where: { id: existingMainCoach.id },
+            data: { isActive: false },
+          });
+        }
+      }
+
+      return updated;
     });
 
     // Log audit action
@@ -114,6 +173,12 @@ export async function PATCH(
       coach: updatedTeam.coach,
       city: updatedTeam.city,
       country: updatedTeam.country,
+      contactPhone: updatedTeam.contactPhone,
+      contactEmail: updatedTeam.contactEmail,
+      contactWebsite: updatedTeam.contactWebsite,
+      contactAddress: updatedTeam.contactAddress,
+      contactTelegram: updatedTeam.contactTelegram,
+      contactVk: updatedTeam.contactVk,
       isActive: updatedTeam.isActive,
       createdAt: updatedTeam.createdAt.toISOString(),
       updatedAt: updatedTeam.updatedAt.toISOString(),

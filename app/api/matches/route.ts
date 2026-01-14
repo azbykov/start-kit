@@ -97,6 +97,7 @@ export async function GET(request: NextRequest) {
             select: {
               id: true,
               name: true,
+              shortName: true,
             },
           },
         },
@@ -121,6 +122,7 @@ export async function GET(request: NextRequest) {
       awayScore: match.awayScore,
       tournamentId: match.tournamentId,
       tournamentName: match.tournament?.name || null,
+      tournamentShortName: match.tournament?.shortName || null,
       createdAt: match.createdAt.toISOString(),
       updatedAt: match.updatedAt.toISOString(),
     }));

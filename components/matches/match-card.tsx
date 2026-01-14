@@ -45,8 +45,12 @@ export function MatchCard({ match }: MatchCardProps) {
     <div className="group bg-card border border-border rounded-xl p-4 lg:p-6 hover:shadow-card transition-all duration-300 hover:border-primary/30">
       <div className="flex items-center justify-between mb-4">
         {match.tournamentName && (
-          <Badge variant="outline" className="text-xs">
-            {match.tournamentName}
+          <Badge
+            variant="outline"
+            className="text-xs max-w-[70%] truncate"
+            title={match.tournamentName}
+          >
+            {match.tournamentShortName || match.tournamentName}
           </Badge>
         )}
         {getStatusBadge()}

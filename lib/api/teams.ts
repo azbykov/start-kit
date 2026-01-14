@@ -81,19 +81,77 @@ export async function getTeamTournaments(teamId: string) {
  * Get list of recent matches for a team
  */
 export async function getTeamMatches(teamId: string) {
-  const response = await api.get<{ matches: Array<{
+  const response = await api.get<{
+    upcoming: Array<{
+      id: string;
+      date: string;
+      time: string | null;
+      status: string;
+      homeTeamId: string;
+      homeTeamName: string;
+      homeTeamLogo: string | null;
+      awayTeamId: string;
+      awayTeamName: string;
+      awayTeamLogo: string | null;
+      homeScore: number | null;
+      awayScore: number | null;
+      tournamentId: string | null;
+      tournamentName: string | null;
+    }>;
+    past: Array<{
+      id: string;
+      date: string;
+      time: string | null;
+      status: string;
+      homeTeamId: string;
+      homeTeamName: string;
+      homeTeamLogo: string | null;
+      awayTeamId: string;
+      awayTeamName: string;
+      awayTeamLogo: string | null;
+      homeScore: number | null;
+      awayScore: number | null;
+      tournamentId: string | null;
+      tournamentName: string | null;
+    }>;
+  }>(`/teams/${teamId}/matches`);
+  return response.data;
+}
+
+/**
+ * Get team staff list
+ */
+export async function getTeamStaff(teamId: string) {
+  const response = await api.get<{ staff: Array<{
     id: string;
-    date: string;
-    homeTeamId: string;
-    homeTeamName: string;
-    homeTeamLogo: string | null;
-    awayTeamId: string;
-    awayTeamName: string;
-    awayTeamLogo: string | null;
-    homeScore: number | null;
-    awayScore: number | null;
-    tournamentId: string | null;
-    tournamentName: string | null;
-  }> }>(`/teams/${teamId}/matches`);
-  return response.data.matches;
+    teamId: string;
+    fullName: string;
+    roleTitle: string;
+    phone: string | null;
+    email: string | null;
+    sortOrder: number;
+    isActive: boolean;
+    createdAt: string;
+    updatedAt: string;
+  }> }>(`/teams/${teamId}/staff`);
+  return response.data.staff;
+}
+
+/**
+ * Get aggregated team statistics across all games
+ */
+export async function getTeamStatistics(teamId: string) {
+  const response = await api.get<{
+    statistics: {
+      played: number;
+      wins: number;
+      draws: number;
+      losses: number;
+      goalsFor: number;
+      goalsAgainst: number;
+      goalDifference: number;
+      points: number;
+    };
+  }>(`/teams/${teamId}/statistics`);
+  return response.data.statistics;
 }

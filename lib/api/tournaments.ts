@@ -9,6 +9,8 @@ import type {
   TournamentProfile,
   TournamentsListResponse,
   PaginationInput,
+  TournamentDocument,
+  TournamentTeamStatisticsRow,
 } from "@/lib/types/tournaments";
 
 /**
@@ -132,5 +134,29 @@ export async function getTournamentStatistics(id: string) {
     minutesPlayed: number;
   }> }>(`/tournaments/${id}/statistics`);
   return response.data.statistics;
+}
+
+/**
+ * Get tournament documents
+ */
+export async function getTournamentDocuments(
+  id: string
+): Promise<TournamentDocument[]> {
+  const response = await api.get<{ documents: TournamentDocument[] }>(
+    `/tournaments/${id}/documents`
+  );
+  return response.data.documents;
+}
+
+/**
+ * Get team statistics for tournament
+ */
+export async function getTournamentTeamStatistics(
+  id: string
+): Promise<TournamentTeamStatisticsRow[]> {
+  const response = await api.get<{ teams: TournamentTeamStatisticsRow[] }>(
+    `/tournaments/${id}/team-statistics`
+  );
+  return response.data.teams;
 }
 

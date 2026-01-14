@@ -102,6 +102,7 @@ export function TournamentForm({
       isEditMode && tournament
         ? {
             name: tournament.name,
+            shortName: tournament.shortName || "",
             organizer: tournament.organizer || "",
             description: tournament.description || "",
             season: tournament.season || "",
@@ -122,6 +123,7 @@ export function TournamentForm({
           }
         : {
             name: "",
+            shortName: "",
             organizer: "",
             description: "",
             season: "",
@@ -156,6 +158,7 @@ export function TournamentForm({
     if (isEditMode && tournament) {
       reset({
         name: tournament.name,
+        shortName: tournament.shortName || "",
         organizer: tournament.organizer || "",
         description: tournament.description || "",
         season: tournament.season || "",
@@ -184,6 +187,7 @@ export function TournamentForm({
     } else {
       reset({
         name: "",
+        shortName: "",
         organizer: "",
         description: "",
         season: "",
@@ -216,6 +220,7 @@ export function TournamentForm({
           id: tournament.id,
           data: {
             name: data.name,
+            shortName: data.shortName || null,
             organizer: data.organizer || null,
             description: data.description || null,
             season: data.season || null,
@@ -236,6 +241,7 @@ export function TournamentForm({
       } else {
         await createMutation.mutateAsync({
           name: data.name!,
+          shortName: data.shortName || null,
           organizer: data.organizer || null,
           description: data.description || null,
           season: data.season || null,
@@ -316,6 +322,26 @@ export function TournamentForm({
                 {errors.name.message as string}
               </p>
             )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="shortName">Короткое название (для тегов)</Label>
+            <Input
+              id="shortName"
+              type="text"
+              {...register("shortName")}
+              placeholder="Зимний турнир U12"
+              disabled={isLoading}
+            />
+            {errors.shortName && (
+              <p className="text-sm text-destructive">
+                {errors.shortName.message as string}
+              </p>
+            )}
+            <p className="text-xs text-muted-foreground">
+              Будет показываться в компактных местах (например, тег турнира в
+              шапке матча). Если не заполнено — используется полное название.
+            </p>
           </div>
 
           <div className="grid grid-cols-2 gap-4">

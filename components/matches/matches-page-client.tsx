@@ -105,7 +105,9 @@ export function MatchesPageClient({ isAdmin }: MatchesPageClientProps) {
                 <SelectItem value="all">Все турниры</SelectItem>
                 {tournaments?.map((tournament) => (
                   <SelectItem key={tournament.id} value={tournament.id}>
-                    {tournament.name}
+                    <span title={tournament.name}>
+                      {tournament.shortName || tournament.name}
+                    </span>
                   </SelectItem>
                 ))}
               </SelectContent>

@@ -32,6 +32,7 @@ export async function GET(
       dateOfBirth: player.dateOfBirth.toISOString().split("T")[0], // ISO date only
       teamId: player.teamId,
       image: player.image,
+      rating: player.rating,
       statistics: {
         totalMatches: player.totalMatches,
         totalGoals: player.totalGoals,

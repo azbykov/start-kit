@@ -47,19 +47,49 @@ export async function POST(request: NextRequest) {
       coach,
       city,
       country,
+      contactPhone,
+      contactEmail,
+      contactWebsite,
+      contactAddress,
+      contactTelegram,
+      contactVk,
       isActive = true,
     } = validationResult.data;
 
-    // Create team
-    const team = await prisma.team.create({
-      data: {
-        name,
-        logo: logo || null,
-        coach: coach || null,
-        city: city || null,
-        country: country || null,
-        isActive,
-      },
+    const coachName = coach?.trim() ? coach.trim() : null;
+
+    // Create team (+ optional main coach in staff)
+    const team = await prisma.$transaction(async (tx) => {
+      const createdTeam = await tx.team.create({
+        data: {
+          name,
+          logo: logo || null,
+          coach: coachName,
+          city: city || null,
+          country: country || null,
+          contactPhone: contactPhone || null,
+          contactEmail: contactEmail || null,
+          contactWebsite: contactWebsite || null,
+          contactAddress: contactAddress || null,
+          contactTelegram: contactTelegram || null,
+          contactVk: contactVk || null,
+          isActive,
+        },
+      });
+
+      if (coachName) {
+        await tx.teamStaffMember.create({
+          data: {
+            teamId: createdTeam.id,
+            fullName: coachName,
+            roleTitle: "Главный тренер",
+            sortOrder: 0,
+            isActive: true,
+          },
+        });
+      }
+
+      return createdTeam;
     });
 
     // Log audit action
@@ -82,6 +112,12 @@ export async function POST(request: NextRequest) {
         coach: team.coach,
         city: team.city,
         country: team.country,
+        contactPhone: team.contactPhone,
+        contactEmail: team.contactEmail,
+        contactWebsite: team.contactWebsite,
+        contactAddress: team.contactAddress,
+        contactTelegram: team.contactTelegram,
+        contactVk: team.contactVk,
         isActive: team.isActive,
         createdAt: team.createdAt.toISOString(),
         updatedAt: team.updatedAt.toISOString(),

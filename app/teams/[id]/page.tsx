@@ -1,8 +1,18 @@
 "use client";
 
 import { use, useEffect, useState } from "react";
-import { useTeamProfile, useTeamPlayers, useTeamTournaments, useTeamMatches } from "@/lib/hooks/use-teams";
+import {
+  useTeamProfile,
+  useTeamPlayers,
+  useTeamTournaments,
+  useTeamMatches,
+  useTeamStaff,
+  useTeamStatistics,
+} from "@/lib/hooks/use-teams";
 import { TeamProfileComponent } from "@/components/teams/team-profile";
+import { TeamContacts } from "@/components/teams/team-contacts";
+import { TeamStaff } from "@/components/teams/team-staff";
+import { TeamStatistics } from "@/components/teams/team-statistics";
 import { TeamForm } from "@/components/teams/team-form";
 import { PlayerForm } from "@/components/players/player-form";
 import { Button } from "@/components/ui/button";
@@ -39,7 +49,10 @@ export default function TeamProfilePage({ params }: TeamProfilePageProps) {
   const { data: team, isLoading, error, refetch: refetchTeam } = useTeamProfile(id);
   const { data: players, isLoading: playersLoading, refetch: refetchPlayers } = useTeamPlayers(id);
   const { data: tournaments, isLoading: tournamentsLoading } = useTeamTournaments(id);
-  const { data: matches, isLoading: matchesLoading } = useTeamMatches(id);
+  const { data: matchesData, isLoading: matchesLoading } = useTeamMatches(id);
+  const { data: staff, isLoading: staffLoading } = useTeamStaff(id);
+  const { data: teamStatistics, isLoading: teamStatisticsLoading } =
+    useTeamStatistics(id);
   const { setTitle, setShowBackButton } = usePageTitle();
   const { data: session } = useSession();
 
@@ -59,6 +72,12 @@ export default function TeamProfilePage({ params }: TeamProfilePageProps) {
         coach: team.coach,
         city: team.city,
         country: team.country,
+        contactPhone: team.contactPhone ?? null,
+        contactEmail: team.contactEmail ?? null,
+        contactWebsite: team.contactWebsite ?? null,
+        contactAddress: team.contactAddress ?? null,
+        contactTelegram: team.contactTelegram ?? null,
+        contactVk: team.contactVk ?? null,
         isActive: team.isActive,
         createdAt: new Date().toISOString(), // Not used in form
         updatedAt: new Date().toISOString(), // Not used in form
@@ -118,6 +137,18 @@ export default function TeamProfilePage({ params }: TeamProfilePageProps) {
           team={team}
           isEditable={canManage}
           onEdit={() => setEditTeamDialogOpen(true)}
+        />
+
+        <TeamContacts team={team} />
+        <TeamStaff
+          teamId={id}
+          staff={staff || []}
+          isLoading={staffLoading}
+          canManage={canManage}
+        />
+        <TeamStatistics
+          statistics={teamStatistics || null}
+          isLoading={teamStatisticsLoading}
         />
 
       {/* Players and Tournaments in 2 columns */}
@@ -208,17 +239,17 @@ export default function TeamProfilePage({ params }: TeamProfilePageProps) {
         </Card>
 
         <div className="space-y-4">
-          {/* Matches List */}
+          {/* Upcoming Matches */}
           <Card>
             <CardHeader className="p-4">
-              <CardTitle className="text-base font-semibold">Последние матчи</CardTitle>
+              <CardTitle className="text-base font-semibold">Предстоящие матчи</CardTitle>
             </CardHeader>
             <CardContent className="p-4">
               {matchesLoading ? (
                 <div className="text-sm text-muted-foreground text-center py-4">
                   Загрузка матчей...
                 </div>
-              ) : matches && matches.length > 0 ? (
+              ) : matchesData?.upcoming && matchesData.upcoming.length > 0 ? (
                 <div className="overflow-auto rounded-md border">
                   <Table className="text-xs">
                     <TableHeader>
@@ -230,7 +261,7 @@ export default function TeamProfilePage({ params }: TeamProfilePageProps) {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {matches.map((match) => {
+                      {matchesData.upcoming.map((match) => {
                         const isHome = match.homeTeamId === id;
                         const opponentName = isHome ? match.awayTeamName : match.homeTeamName;
                         const opponentLogo = isHome ? match.awayTeamLogo : match.homeTeamLogo;
@@ -293,7 +324,98 @@ export default function TeamProfilePage({ params }: TeamProfilePageProps) {
                 </div>
               ) : (
                 <div className="text-sm text-muted-foreground text-center py-4">
-                  Нет матчей
+                  Нет предстоящих матчей
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Past Matches */}
+          <Card>
+            <CardHeader className="p-4">
+              <CardTitle className="text-base font-semibold">Прошедшие матчи</CardTitle>
+            </CardHeader>
+            <CardContent className="p-4">
+              {matchesLoading ? (
+                <div className="text-sm text-muted-foreground text-center py-4">
+                  Загрузка матчей...
+                </div>
+              ) : matchesData?.past && matchesData.past.length > 0 ? (
+                <div className="overflow-auto rounded-md border">
+                  <Table className="text-xs">
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="font-normal">Дата</TableHead>
+                        <TableHead className="font-normal">Соперник</TableHead>
+                        <TableHead className="font-normal text-center">Счет</TableHead>
+                        <TableHead className="font-normal">Турнир</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {matchesData.past.map((match) => {
+                        const isHome = match.homeTeamId === id;
+                        const opponentName = isHome ? match.awayTeamName : match.homeTeamName;
+                        const opponentLogo = isHome ? match.awayTeamLogo : match.homeTeamLogo;
+                        const teamScore = isHome ? match.homeScore : match.awayScore;
+                        const opponentScore = isHome ? match.awayScore : match.homeScore;
+                        const hasScore = teamScore !== null && opponentScore !== null;
+                        const isWin = hasScore && teamScore > opponentScore;
+                        const isLoss = hasScore && teamScore < opponentScore;
+
+                        return (
+                          <TableRow key={match.id}>
+                            <TableCell className="text-xs">
+                              {new Date(match.date).toLocaleDateString("ru-RU", {
+                                day: "2-digit",
+                                month: "2-digit",
+                              })}
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                {opponentLogo ? (
+                                  <div className="relative h-6 w-6 flex-shrink-0 rounded overflow-hidden border">
+                                    <Image
+                                      src={opponentLogo}
+                                      alt={opponentName}
+                                      fill
+                                      className="object-cover"
+                                    />
+                                  </div>
+                                ) : (
+                                  <div className="h-6 w-6 flex-shrink-0 rounded border bg-muted" />
+                                )}
+                                <div className="text-xs font-medium truncate">
+                                  {opponentName}
+                                </div>
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-center">
+                              {hasScore ? (
+                                <div className="flex items-center justify-center gap-1">
+                                  <span className={isWin ? "font-semibold" : ""}>
+                                    {teamScore}
+                                  </span>
+                                  <span className="text-muted-foreground">:</span>
+                                  <span className={isLoss ? "font-semibold" : ""}>
+                                    {opponentScore}
+                                  </span>
+                                </div>
+                              ) : (
+                                <span className="text-muted-foreground">—</span>
+                              )}
+                            </TableCell>
+                            <TableCell className="text-xs text-muted-foreground truncate">
+                              {match.tournamentName || "—"}
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                </div>
+              ) : (
+                <div className="text-sm text-muted-foreground text-center py-4">
+                  Нет прошедших матчей
                 </div>
               )}
             </CardContent>

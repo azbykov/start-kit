@@ -145,9 +145,10 @@ const createColumns = (
     header: "Турнир",
     cell: ({ row }) => {
       const tournamentName = row.original.tournamentName;
+      const tournamentShortName = row.original.tournamentShortName;
       return (
-        <div className="text-xs text-muted-foreground">
-          {tournamentName || "—"}
+        <div className="text-xs text-muted-foreground" title={tournamentName || undefined}>
+          {tournamentShortName || tournamentName || "—"}
         </div>
       );
     },

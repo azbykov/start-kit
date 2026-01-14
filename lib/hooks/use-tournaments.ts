@@ -13,6 +13,8 @@ import {
   getTournamentStandings,
   getTournamentTeams,
   getTournamentStatistics,
+  getTournamentDocuments,
+  getTournamentTeamStatistics,
 } from "@/lib/api/tournaments";
 import type {
   PaginationInput,
@@ -101,6 +103,28 @@ export function useTournamentStatistics(id: string) {
   return useQuery({
     queryKey: [...tournamentKeys.detail(id), "statistics"],
     queryFn: () => getTournamentStatistics(id),
+    enabled: !!id,
+  });
+}
+
+/**
+ * Hook to get tournament documents
+ */
+export function useTournamentDocuments(id: string) {
+  return useQuery({
+    queryKey: [...tournamentKeys.detail(id), "documents"],
+    queryFn: () => getTournamentDocuments(id),
+    enabled: !!id,
+  });
+}
+
+/**
+ * Hook to get team statistics for tournament
+ */
+export function useTournamentTeamStatistics(id: string) {
+  return useQuery({
+    queryKey: [...tournamentKeys.detail(id), "team-statistics"],
+    queryFn: () => getTournamentTeamStatistics(id),
     enabled: !!id,
   });
 }

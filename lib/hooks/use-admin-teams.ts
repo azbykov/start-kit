@@ -9,6 +9,11 @@ import {
   createTeam,
   updateTeam,
   deleteTeam,
+  createTeamStaffMember,
+  updateTeamStaffMember,
+  deleteTeamStaffMember,
+  uploadTeamStaffPhoto,
+  deleteTeamStaffPhoto,
 } from "@/lib/api/admin/teams";
 import type {
   Team,
@@ -135,6 +140,110 @@ export function useDeleteTeam() {
       // Invalidate all team lists and details to refresh data
       queryClient.invalidateQueries({ queryKey: teamKeys.lists() });
       queryClient.invalidateQueries({ queryKey: teamKeys.details() });
+    },
+  });
+}
+
+/**
+ * Hook to create staff member
+ */
+export function useCreateTeamStaffMember() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (params: {
+      teamId: string;
+      data: {
+        fullName: string;
+        roleTitle: string;
+        phone?: string | null;
+        email?: string | null;
+        sortOrder?: number;
+        isActive?: boolean;
+      };
+    }) => createTeamStaffMember(params),
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: [...teamKeys.detail(variables.teamId), "staff"],
+      });
+    },
+  });
+}
+
+/**
+ * Hook to update staff member
+ */
+export function useUpdateTeamStaffMember() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (params: {
+      teamId: string;
+      staffId: string;
+      data: {
+        fullName?: string;
+        roleTitle?: string;
+        phone?: string | null;
+        email?: string | null;
+        sortOrder?: number;
+        isActive?: boolean;
+      };
+    }) => updateTeamStaffMember(params),
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: [...teamKeys.detail(variables.teamId), "staff"],
+      });
+    },
+  });
+}
+
+/**
+ * Hook to delete staff member
+ */
+export function useDeleteTeamStaffMember() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (params: { teamId: string; staffId: string }) =>
+      deleteTeamStaffMember(params),
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: [...teamKeys.detail(variables.teamId), "staff"],
+      });
+    },
+  });
+}
+
+/**
+ * Hook to upload staff photo
+ */
+export function useUploadTeamStaffPhoto() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (params: { teamId: string; staffId: string; file: File }) =>
+      uploadTeamStaffPhoto(params),
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: [...teamKeys.detail(variables.teamId), "staff"],
+      });
+    },
+  });
+}
+
+/**
+ * Hook to delete staff photo
+ */
+export function useDeleteTeamStaffPhoto() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (params: { teamId: string; staffId: string }) =>
+      deleteTeamStaffPhoto(params),
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: [...teamKeys.detail(variables.teamId), "staff"],
+      });
     },
   });
 }
